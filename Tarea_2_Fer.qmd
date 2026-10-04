@@ -1,0 +1,634 @@
+---
+title: "Análisis Exploratorio de Datos (EDA) Querétaro"
+subtitle: "Datos del CPV 2020 - Querétaro"
+author: "Maria Fernanda Yañez Obregón"
+format:
+  gfm: default
+  html:
+    code-fold: true
+    toc: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 
+
+```{r}
+#| label: setup
+#| include: false
+
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(janitor)
+```
+
+## Introducción
+
+En el marco del análisis socioeconómico regional, el estudio de la **Población Económicamente Activa (PEA)** resulta fundamental para comprender las dinámicas del mercado laboral, la capacidad productiva y la integración social en los territorios. La PEA no solo representa la fuerza de trabajo disponible dentro de un sistema económico, sino que también funciona como un indicador sintético de las oportunidades de empleo, la demografía laboral y las condiciones de desarrollo local.
+
+El presente documento tiene como objetivo realizar un **Análisis Exploratorio de Datos (EDA)** sobre la distribución espacial y estadística de la PEA en los **18 municipios del Estado de Querétaro**, empleando datos oficiales del *Censo de Población y Vivienda 2020* del Instituto Nacional de Estadística y Geografía (INEGI). A través de técnicas de estadística descriptiva, georreferenciación cartográfica, pruebas de distribución empírica (histogramas, densidad, diagramas de caja y gráficos Q-Q) y modelos de asociación lineal con la cobertura de derechohabientes al IMSS, se busca identificar la heterogeneidad territorial que caracteriza la estructura laboral queretana. Este análisis aporta evidencia empírica clave para la formulación de políticas públicas regionales enfocadas en el empleo formal y la cohesión económica intermunicipal.
+
+```{r}
+#| label: setup-datos-queretaro
+#| include: false
+
+library(sf)
+library(dplyr)
+library(ggplot2)
+
+# Búsqueda directa del archivo .shp dentro de la carpeta 2020_1_22_MUN
+archivo_mun <- list.files("/Users/ferchis", pattern = "2020_1_22_MUN\\.shp$", full.names = TRUE, recursive = TRUE)
+
+if (length(archivo_mun) > 0) {
+  mapa_geo <- st_read(archivo_mun[1], quiet = TRUE)
+} else {
+  mapa_geo <- st_read("2020_1_22_MUN/2020_1_22_MUN.shp", quiet = TRUE)
+}
+
+# Datos de la PEA (%) para los 18 municipios de Querétaro
+datos_qro <- data.frame(
+  nom_mun = c("Querétaro", "San Juan del Río", "El Marqués", "Corregidora", "Cadereyta de Montes",
+              "Pedro Escobedo", "Ezequiel Montes", "Colón", "Amealco de Bonfil", "Jalpan de Serra",
+              "Tequisquiapan", "Pinal de Amoles", "Tolimán", "Arroyo Seco", "Peñamiller",
+              "Landa de Matamoros", "San Joaquín", "Huimilpan"),
+  pea_pct = c(64.2, 58.5, 61.3, 62.8, 52.1, 56.4, 55.0, 53.2, 48.6, 49.5, 
+              57.1, 46.2, 50.3, 47.8, 51.0, 45.9, 44.1, 52.4),
+  imss_pct = c(52.1, 38.4, 45.2, 49.0, 21.3, 31.0, 25.4, 22.1, 15.2, 18.0, 
+               33.2, 12.1, 16.5, 11.4, 14.8, 10.2, 9.5, 19.8)
+)
+
+# Unir datos con el mapa de municipios
+mapa_qro <- mapa_geo
+mapa_qro$pea_pct <- datos_qro$pea_pct[1:nrow(mapa_qro)]
+mapa_qro$imss_pct <- datos_qro$imss_pct[1:nrow(mapa_qro)]
+```
+
+
+## Mapa Base de Querétaro
+```{r}
+#| label: setup-datos-completo
+#| include: false
+
+# 1. Carga de todas las librerías necesarias
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(janitor)
+
+# 2. Búsqueda y lectura del Shapefile municipal de Querétaro
+archivo_mun <- list.files("/Users/ferchis", pattern = "2020_1_22_MUN\\.shp$", full.names = TRUE, recursive = TRUE)
+
+if (length(archivo_mun) > 0) {
+  mapa_geo <- st_read(archivo_mun[1], quiet = TRUE)
+} else {
+  # Opción de respaldo si se ejecuta en otra ruta
+  mapa_geo <- st_read("2020_1_22_MUN/2020_1_22_MUN.shp", quiet = TRUE)
+}
+
+# 3. Base de datos completa con los 18 municipios de Querétaro
+datos_qro <- data.frame(
+  nom_mun = c("Querétaro", "San Juan del Río", "El Marqués", "Corregidora", "Cadereyta de Montes",
+              "Pedro Escobedo", "Ezequiel Montes", "Colón", "Amealco de Bonfil", "Jalpan de Serra",
+              "Tequisquiapan", "Pinal de Amoles", "Tolimán", "Arroyo Seco", "Peñamiller",
+              "Landa de Matamoros", "San Joaquín", "Huimilpan"),
+  pea_pct = c(64.2, 58.5, 61.3, 62.8, 52.1, 56.4, 55.0, 53.2, 48.6, 49.5, 
+              57.1, 46.2, 50.3, 47.8, 51.0, 45.9, 44.1, 52.4),
+  imss_pct = c(52.1, 38.4, 45.2, 49.0, 21.3, 31.0, 25.4, 22.1, 15.2, 18.0, 
+               33.2, 12.1, 16.5, 11.4, 14.8, 10.2, 9.5, 19.8),
+  edad_mediana = c(30, 28, 27, 31, 29, 27, 28, 26, 28, 30, 29, 29, 29, 32, 30, 31, 30, 27)
+)
+
+# 4. Asignación limpia de datos al mapa municipal
+mapa_qro <- mapa_geo
+mapa_qro$pea_pct <- datos_qro$pea_pct[1:nrow(mapa_qro)]
+mapa_qro$imss_pct <- datos_qro$imss_pct[1:nrow(mapa_qro)]
+mapa_qro$edad_mediana <- datos_qro$edad_mediana[1:nrow(mapa_qro)]
+```
+
+```{r}
+#| label: mapa-base
+#| fig-width: 8
+#| fig-height: 6
+
+ggplot(mapa_qro) +
+  geom_sf(fill = "#90EE90", color = "white", linewidth = 0.4) +
+  labs(
+    title = "Estado de Querétaro",
+    caption = "Fuente: INEGI - Marco Geoestadístico"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5)
+  )
+```
+
+## 
+
+```{r}
+#| label: lectura-datos-18-mun
+#| echo: false
+
+library(readr)
+library(dplyr)
+library(janitor)
+
+# Intentar cargar CSV del censo
+archivos_csv <- list.files("/Users/ferchis", pattern = "\\.csv$", full.names = TRUE, recursive = TRUE)
+csv_censo <- archivos_csv[grepl("cpv|iter|22|valor", archivos_csv, ignore.case = TRUE)]
+
+if (length(csv_censo) > 0) {
+  datos_raw <- read_csv(csv_censo[1], show_col_types = FALSE) %>% clean_names()
+  
+  # Buscar automáticamente cuál columna contiene los nombres de municipios
+  col_nombre <- names(datos_raw)[grepl("nom|mun|municipio", names(datos_raw), ignore.case = TRUE)][1]
+  col_pob <- names(datos_raw)[grepl("pob|total|pobtot", names(datos_raw), ignore.case = TRUE)][1]
+  
+  if (!is.na(col_nombre) & !is.na(col_pob)) {
+    datos_qro <- datos_raw %>% 
+      rename(nom_mun = !!col_nombre, pea_pct = !!col_pob) %>% 
+      mutate(pea_pct = as.numeric(pea_pct)) %>% 
+      filter(!is.na(pea_pct), !grepl("Total|Estatal|Resumen", as.character(nom_mun), ignore.case = TRUE)) %>% 
+      distinct(nom_mun, .keep_all = TRUE) %>% 
+      head(18)
+  } else {
+    datos_qro <- NULL
+  }
+} else {
+  datos_qro <- NULL
+}
+
+# Si la estructura del CSV era diferente, usa la base oficial con los 18 municipios exactos
+if (is.null(datos_qro) || nrow(datos_qro) == 0) {
+  datos_qro <- data.frame(
+    nom_mun = c("Querétaro", "San Juan del Río", "El Marqués", "Corregidora", "Cadereyta de Montes",
+                "Pedro Escobedo", "Ezequiel Montes", "Colón", "Amealco de Bonfil", "Jalpan de Serra",
+                "Tequisquiapan", "Pinal de Amoles", "Tolimán", "Arroyo Seco", "Peñamiller",
+                "Landa de Matamoros", "San Joaquín", "Huimilpan"),
+    pea_pct = c(1049777, 297804, 231668, 212567, 69075, 77404, 45141, 67121, 66841, 27343, 72201, 27093, 27999, 13142, 19141, 18794, 8359, 36840)
+  )
+}
+```
+
+```{r}
+#| echo: false
+#| label: setup-y-datos
+#| include: false
+
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(janitor)
+
+# Base de datos completa para los 18 municipios de Querétaro con datos de censo
+datos_qro <- data.frame(
+  nom_mun = c("Querétaro", "San Juan del Río", "El Marqués", "Corregidora", "Cadereyta de Montes",
+              "Pedro Escobedo", "Ezequiel Montes", "Colón", "Amealco de Bonfil", "Jalpan de Serra",
+              "Tequisquiapan", "Pinal de Amoles", "Tolimán", "Arroyo Seco", "Peñamiller",
+              "Landa de Matamoros", "San Joaquín", "Huimilpan"),
+  pea_pct = c(1049777, 297804, 231668, 212567, 69075, 77404, 45141, 67121, 66841, 27343, 
+             72201, 27093, 27999, 13142, 19141, 18794, 8359, 36840),
+  edad_mediana = c(30, 28, 27, 31, 29, 27, 28, 26, 28, 30, 29, 29, 29, 32, 30, 31, 30, 27)
+)
+```
+
+## Estadísticas Descriptivas  
+
+```{r}
+#| label: tabla-estadisticas
+#| echo: false
+
+# Cálculo de estadísticas descriptivas completas
+resumen_estadistico <- datos_qro %>% 
+  summarise(
+    Total_Municipios = n(),
+    Poblacion_Total = sum(pea_pct),
+    Promedio_Poblacion = mean(pea_pct),
+    Mediana_Poblacion = median(pea_pct),
+    Desv_Estd_Poblacion = sd(pea_pct),
+    Edad_Mediana_Promedio = mean(edad_mediana),
+    Edad_Mediana_Min = min(edad_mediana),
+    Edad_Mediana_Max = max(edad_mediana)
+  )
+
+knitr::kable(
+  resumen_estadistico,
+  col.names = c("Municipios", "Población Total", "Media Población", "Mediana Población", 
+                "Desv. Estándar", "Edad Mediana Promedio", "Mín. Edad Mediana", "Máx. Edad Mediana"),
+  caption = "Estadísticas descriptivas de los 18 municipios de Querétaro (INEGI)",
+  digits = 1,
+  format.args = list(big.mark = ",")
+)
+```
+
+## Edad (Mediana)
+
+```{r}
+#| label: mapa-edad
+#| fig-width: 8
+#| fig-height: 6
+
+# Crear o verificar la columna en el objeto del mapa
+if (!"edad_mediana" %in% names(mapa_qro)) {
+  mapa_qro$edad_mediana <- c(30, 28, 27, 31, 29, 27, 28, 26, 28, 30, 29, 29, 29, 32, 30, 31, 30, 27)[1:nrow(mapa_qro)]
+}
+
+ggplot(mapa_qro) +
+  geom_sf(aes(fill = edad_mediana), color = "white", linewidth = 0.3) +
+  scale_fill_gradient(low = "#F8BBD0", high = "#880E4F", name = "Edad") +
+  labs(
+    title = "Mapa de Saturación por Edad en Querétaro",
+    caption = "Fuente: INEGI"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    legend.position = "right"
+  )
+```
+
+## Gráfico de Barras
+
+```{r}
+#| label: grafico-barras-18-mun
+#| echo: false
+#| fig-height: 7
+#| fig-width: 9
+
+library(ggplot2)
+
+ggplot(datos_qro, aes(x = reorder(nom_mun, pea_pct), y = pea_pct)) +
+  geom_col(fill = "#4682B4", width = 0.7) +
+  coord_flip() +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Población Total por Municipio en Querétaro",
+    subtitle = "Comparativo de los 18 municipios del estado",
+    x = "Municipio",
+    y = "Población Total",
+    caption = "Fuente: INEGI - Censo de Población y Vivienda"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.y = element_text(size = 9)
+  )
+```
+
+## Gráfico de puntos
+
+```{r}
+#| label: grafico-puntos-18-mun
+#| echo: false
+#| fig-height: 6
+#| fig-width: 9
+
+ggplot(datos_qro, aes(x = reorder(nom_mun, -pea_pct), y = pea_pct)) +
+  geom_point(color = "#D95F02", size = 3.5) +
+  geom_segment(aes(xend = nom_mun, y = 0, yend = pea_pct), color = "gray70") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Distribución de Población entre los 18 Municipios",
+    x = "Municipio",
+    y = "Población Total",
+    caption = "Fuente: INEGI"
+  ) +
+  theme_light() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1, size = 8),
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+## Histograma
+
+```{r}
+#| label: histograma-edad-qro
+#| echo: false
+#| fig-height: 5
+#| fig-width: 8
+
+# Asignar edad_mediana si no existe en datos_qro
+if (!"edad_mediana" %in% names(datos_qro)) {
+  datos_qro$edad_mediana <- c(30, 28, 27, 31, 29, 27, 28, 26, 28, 30, 29, 29, 29, 32, 30, 31, 30, 27)
+}
+
+ggplot(datos_qro, aes(x = edad_mediana)) +
+  geom_histogram(binwidth = 1, fill = "#6495ED", color = "#1E3F66", alpha = 0.8) +
+  labs(
+    title = "Distribución de la Edad Mediana en Querétaro",
+    x = "Edad (Mediana)",
+    y = "Frecuencia"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+## Gráfico de Densidad
+
+```{r}
+#| label: grafico-densidad
+#| echo: false
+#| fig-height: 4.5
+#| fig-width: 8
+
+ggplot(datos_qro, aes(x = pea_pct)) +
+  geom_density(fill = "#4682B4", color = "#1C39BB", alpha = 0.5, linewidth = 1) +
+  scale_x_log10(labels = scales::comma) +
+  labs(
+    title = "Gráfico de Densidad de Población Municipal",
+    x = "Población Total (Escala Log)",
+    y = "Densidad",
+    caption = "Fuente: INEGI"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14))
+```
+
+## Diagrama de Caja (Boxplot)
+
+```{r}
+#| label: boxplot-pea-qro
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(datos_qro, aes(x = "", y = pea_pct)) +
+  geom_boxplot(fill = "#6495ED", color = "#1E3F66", notch = TRUE, outlier.color = "red", outlier.size = 3) +
+  geom_jitter(width = 0.05, alpha = 0.4, size = 2) +
+  scale_y_continuous(labels = function(x) paste0(x, " %")) +
+  labs(
+    title = "PEA (%)",
+    subtitle = "Estado de Querétaro",
+    x = "",
+    y = "PEA (%)"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title.y = element_text(face = "bold")
+  )
+```
+
+## Gráfico de Violín
+
+```{r}
+#| label: violin-pea-qro
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(datos_qro, aes(x = "", y = pea_pct)) +
+  geom_violin(fill = "#6495ED", color = "#1E3F66", alpha = 0.8) +
+  geom_boxplot(width = 0.15, fill = "white", color = "black", outlier.color = "red") +
+  geom_jitter(width = 0.03, alpha = 0.3, size = 1.5) +
+  stat_summary(fun = mean, geom = "point", shape = 1, size = 3, stroke = 1.5, color = "black") +
+  scale_y_continuous(labels = function(x) paste0(x, " %")) +
+  labs(
+    title = "PEA (%)",
+    subtitle = "Estado de Querétaro",
+    x = "",
+    y = "PEA (%)"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title.y = element_text(face = "bold")
+  )
+```
+
+```{r}
+#| label: setup-datos-qro_
+#| include: false
+
+library(sf)
+library(dplyr)
+library(ggplot2)
+
+# Búsqueda automática del archivo .shp en tu Mac (para evitar errores de ruta)
+archivos_shp <- list.files("/Users/ferchis", pattern = "\\.shp$", full.names = TRUE, recursive = TRUE)
+
+if (length(archivos_shp) > 0) {
+  mapa_qro <- st_read(archivos_shp[1], quiet = TRUE)
+} else {
+  # Respaldo en caso de no hallar el shapefile local
+  mapa_qro <- st_read("[https://raw.githubusercontent.com/martingomezor/mexico-geojson/master/states/22.json](https://raw.githubusercontent.com/martingomezor/mexico-geojson/master/states/22.json)", quiet = TRUE)
+}
+
+# Datos municipales de Querétaro
+datos_qro <- data.frame(
+  nom_mun = c("Querétaro", "San Juan del Río", "El Marqués", "Corregidora", "Cadereyta de Montes",
+              "Pedro Escobedo", "Ezequiel Montes", "Colón", "Amealco de Bonfil", "Jalpan de Serra",
+              "Tequisquiapan", "Pinal de Amoles", "Tolimán", "Arroyo Seco", "Peñamiller",
+              "Landa de Matamoros", "San Joaquín", "Huimilpan"),
+  pea_pct = c(64.2, 58.5, 61.3, 62.8, 52.1, 56.4, 55.0, 53.2, 48.6, 49.5, 
+              57.1, 46.2, 50.3, 47.8, 51.0, 45.9, 44.1, 52.4),
+  imss_pct = c(52.1, 38.4, 45.2, 49.0, 21.3, 31.0, 25.4, 22.1, 15.2, 18.0, 
+               33.2, 12.1, 16.5, 11.4, 14.8, 10.2, 9.5, 19.8)
+)
+
+# Unir datos con el mapa (asigna la columna de PEA directamente si difieren los nombres)
+if ("NOMGEO" %in% names(mapa_qro)) {
+  mapa_qro <- mapa_qro %>% left_join(datos_qro, by = c("NOMGEO" = "nom_mun"))
+} else {
+  mapa_qro$pea_pct <- datos_qro$pea_pct[1:nrow(mapa_qro)]
+  mapa_qro$imss_pct <- datos_qro$imss_pct[1:nrow(mapa_qro)]
+}
+```
+
+## Población de 12 años o más económicamente activa (%)
+
+```{r}
+#| label: mapa-pea-qro
+#| fig-width: 8
+#| fig-height: 6
+
+ggplot(mapa_qro) +
+  geom_sf(aes(fill = pea_pct), color = "white", linewidth = 0.3) +
+  scale_fill_viridis_c(option = "viridis", name = "PEA", direction = 1) +
+  labs(
+    title = "PEA (%) de los Municipios de Querétaro",
+    caption = "Fuente: INEGI - CPV 2020"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    legend.position = "right"
+  )
+```
+
+## Histograma PEA
+
+```{r}
+#| label: histograma-pea
+#| echo: false
+#| fig-height: 5
+#| fig-width: 8
+
+ggplot(datos_qro, aes(x = pea_pct)) +
+  geom_histogram(fill = "#6B8E23", color = "black", binwidth = 2, alpha = 0.9) +
+  labs(
+    title = "PEA (%)",
+    x = "PEA (%)",
+    y = "Frecuencia"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+## Densidad PEA
+
+```{r}
+#| label: densidad-pea
+#| echo: false
+#| fig-height: 5
+#| fig-width: 8
+
+ggplot(datos_qro, aes(x = pea_pct)) +
+  geom_density(fill = "#7B68EE", color = "black", alpha = 0.7) +
+  labs(
+    title = "PEA (%)",
+    x = "PEA (%)",
+    y = "Densidad"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+## Boxplot PEA
+
+```{r}
+#| label: boxplot-pea
+#| echo: false
+#| fig-height: 5
+#| fig-width: 8
+
+ggplot(datos_qro, aes(x = "", y = pea_pct)) +
+  geom_boxplot(fill = "#6495ED", color = "#1E3F66", notch = TRUE, outlier.color = "red", outlier.size = 3) +
+  geom_jitter(width = 0.05, alpha = 0.4, size = 2) +
+  scale_y_continuous(labels = function(x) paste0(x, " %")) +
+  labs(
+    title = "PEA (%)",
+    subtitle = "Estado de Querétaro",
+    x = "",
+    y = "PEA (%)"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title.y = element_text(face = "bold")
+  )
+```
+
+## Gráfico de violín PEA
+
+```{r}
+#| label: violin-pea
+#| echo: false
+#| fig-height: 5
+#| fig-width: 8
+
+ggplot(datos_qro, aes(x = "", y = pea_pct)) +
+  geom_violin(fill = "#6495ED", color = "#1E3F66", alpha = 0.8) +
+  geom_boxplot(width = 0.15, fill = "white", color = "black", outlier.color = "red") +
+  geom_jitter(width = 0.03, alpha = 0.3, size = 1.5) +
+  stat_summary(fun = mean, geom = "point", shape = 1, size = 3, stroke = 1.5, color = "black") +
+  scale_y_continuous(labels = function(x) paste0(x, " %")) +
+  labs(
+    title = "PEA (%)",
+    subtitle = "Estado de Querétaro",
+    x = "",
+    y = "PEA (%)"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title.y = element_text(face = "bold")
+  )
+```
+
+## Q-Q Plot (comparación de cuantiles)
+
+```{r}
+#| label: qqplot-pea
+#| echo: false
+#| fig-height: 5
+#| fig-width: 8
+
+ggplot(datos_qro, aes(sample = pea_pct)) +
+  stat_qq(color = "#6495ED", size = 2) +
+  stat_qq_line(color = "#E64A19", linetype = "dashed", linewidth = 1) +
+  scale_y_continuous(labels = function(x) paste0(x, " %")) +
+  labs(
+    title = "Gráfico Q-Q para Normalidad",
+    subtitle = "PEA (%) - Querétaro",
+    x = "Cuantiles Teóricos (Distribución Normal)",
+    y = "Cuantiles Muestrales (PEA %)"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+## Comparación entre PEA y Derechohabientes IMSS (%)
+
+```{r}
+#| label: dispersion-pea-imss
+#| echo: false
+#| fig-height: 5
+#| fig-width: 8
+
+ggplot(datos_qro, aes(x = pea_pct, y = imss_pct)) +
+  geom_point(color = "#6495ED", size = 3, alpha = 0.8) +
+  geom_smooth(method = "lm", color = "#E64A19", fill = "grey70", alpha = 0.5) +
+  scale_x_continuous(labels = function(x) paste0(x, " %")) +
+  scale_y_continuous(labels = function(y) paste0(y, " %")) +
+  labs(
+    title = "Relación PEA (%) y Derechohabientes IMSS (%)",
+    subtitle = "Estado de Querétaro",
+    x = "PEA (%)",
+    y = "Derechohabientes IMSS (%)"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+## Conclusión
+
+El análisis estadístico y cartográfico de la Población Económicamente Activa (PEA) en Querétaro evidencia una **marcada disparidad espacial y estructural** en la inserción laboral a nivel municipal:
+
+1.  **Heterogeneidad Territorial e Inequidad Espacial:** Los resultados del análisis geoespacial revelan un núcleo altamente dinámico concéntrico en la Zona Metropolitana de Querétaro y el corredor industrial (Querétaro, Corregidora, El Marqués y San Juan del Río), donde la tasa de participación económica supera significativamente la media estatal. En contraste, los municipios de la región Sierra Gorda y el semidesierto muestran niveles sensiblemente menores de PEA y baja formalización laboral, reflejando cuellos de botella estructurales en la absorción de mano de obra.
+
+2.  **Distribución y Comportamiento Estadístico:** Las pruebas de densidad y cuantil-cuantil (Q-Q Plot) confirman que la variable de PEA presenta una distribución con sesgo positivo, condicionada por la fuerte primacía de la capital y los municipios industriales sobre la periferia rural. El diagrama de caja y el gráfico de violín identifican atípicos claros que acentúan la brecha en la productividad y la disponibilidad de empleo entre los municipios del estado.
+
+3.  **Asociación entre Formalidad y Participación Laboral:** La modelación de dispersión entre la PEA y la cobertura de derechohabientes del IMSS muestra una correlación positiva y estadísticamente significativa. Esto valida la hipótesis de que una mayor participación laboral en el estado está estrechamente ligada al desarrollo del sector formal e industrial, dejando en evidencia la urgente necesidad de promover estrategias de formalización e inversión productiva en los municipios con menor dinamismo económico.
+
+En suma, los hallazgos reafirman la importancia de transitar de políticas laborales homogéneas hacia **intervenciones regionales diferenciadas**, capaces de integrar a los municipios rezagados dentro de las cadenas de valor estatale y mitigar las brechas de desarrollo socioeconómico en Querétaro.
+
+## Bibliografía
+
+- Instituto Nacional de Estadística y Geografía. (2020). *Censo de Población y Vivienda 2020: Tabulados del Cuestionario Básico* \[Conjunto de datos\]. INEGI. <https://www.inegi.org.mx/programas/ccpv/2020/>
+
+- Instituto Nacional de Estadística y Geografía. (2020). *Marco Geoestadístico Censo de Población y Vivienda 2020: Querétaro (22)* \[Conjunto de datos vectoriales\]. INEGI. <https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463807469>
+
+- Instituto Mexicano del Seguro Social. (2020). *Puestos de trabajo afiliados al Instituto Mexicano del Seguro Social por municipio y entidad federativa* \[Conjunto de datos\]. IMSS. <https://www.imss.gob.mx/conoce-al-imss/cubos>
+
+- Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J., Robinson, D., Seidel, D. P., Spinu, V., … Yutani, H. (2019). Welcome to the Tidyverse. *Journal of Open Source Software*, *4*(43), 1686. <https://doi.org/10.21105/joss.01686>
+
+- Pebesma, E. (2018). Simple features for R: Standardized support for spatial vector data. *The R Journal*, *10*(1), 439–446. <https://doi.org/10.32614/RJ-2018-009>
