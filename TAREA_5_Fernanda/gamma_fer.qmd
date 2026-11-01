@@ -1,0 +1,143 @@
+---
+title: "Distribución Gamma"
+author: "Maria Fernanda Yañez Obregón"
+format: html
+editor: visual
+---
+
+# Ejercicios Propuestos
+
+## Introducción
+
+En esta sección se estudia la distribución gamma y sus propiedades fundamentales mediante simulación numérica en R. En primer lugar, se verifica el Teorema Central del Límite analizando la convergencia de las medias muestrales y sus respectivas varianzas a diferentes tamaños de muestra. En segundo lugar, se comprueba la propiedad aditiva de las variables exponenciales independientes, demostrando cómo su suma converge exactamente hacia una distribución gamma cuyos parámetros reflejan el número de términos sumados y la tasa original.
+
+## Simulación y Teorema Central del Límite
+
+### - Genera 1000 muestras de tamaños $n= 5, 10, 20, 30, 50, 100$ de una distribución $\text{gamma}(\alpha = 2.5, \lambda = 1.8)$.
+
+### - Calcula la media muestral para cada muestra y compárala con la media teórica.
+
+```{r}
+#| label: exr-tcl_gamma-medias
+#| echo: false
+set.seed(123)
+alpha <- 2.5
+lambda <- 1.8
+n_muestras <- 1000
+ns <- c(5, 10, 20, 30, 50, 100)
+
+media_teorica <- alpha / lambda
+cat(sprintf("Media teórica: %.4f\n\n", media_teorica))
+
+# Almacenar medias muestrales para usar en los siguientes incisos
+medias_list <- list()
+
+for (n in ns) {
+  mat <- matrix(rgamma(n_muestras * n, shape = alpha, rate = lambda), nrow = n_muestras, ncol = n)
+  medias <- rowMeans(mat)
+  medias_list[[as.character(n)]] <- medias
+  cat(sprintf("n = %3d -> Media de las medias muestrales: %.4f (Dif: %.4f)\n", 
+              n, mean(medias), mean(medias) - media_teorica))
+}
+```
+
+### - Calcula la varianza de las medias muestrales y compárala con la varianza teórica dividida por $n$.
+
+```{r}
+#| label: exr-tcl_gamma-varianzas
+#| echo: false
+set.seed(123)
+alpha <- 2.5
+lambda <- 1.8
+varianza_teorica_poblacional <- alpha / (lambda^2)
+
+cat("--- COMPARACIÓN DE VARIANZAS DE LAS MEDIAS MUESTRALES ---\n")
+for (n in ns) {
+  medias <- medias_list[[as.character(n)]]
+  var_muestral_medias <- var(medias)
+  var_teorica_media <- varianza_teorica_poblacional / n
+  cat(sprintf("n = %3d -> Var(X_bar) simulada: %.6f | Var teórica (sigma^2/n): %.6f\n", 
+              n, var_muestral_medias, var_teorica_media))
+}
+```
+
+### - Grafica los histogramas de las medias muestrales y superpone la distribución normal teórica según el TCL.
+
+```{r}
+#| label: exr-tcl_gamma-graficas
+#| echo: false
+set.seed(123)
+alpha <- 2.5
+lambda <- 1.8
+ns <- c(5, 10, 20, 30, 50, 100)
+
+par(mfrow = c(2, 3))
+for (n in ns) {
+  medias <- medias_list[[as.character(n)]]
+  mu_xbar <- alpha / lambda
+  sd_xbar <- sqrt((alpha / (lambda^2)) / n)
+  
+  hist(medias, probability = TRUE, col = "thistle1", border = "white",
+       main = paste0("n = ", n), xlab = "Media Muestral", ylab = "Densidad", breaks = 20)
+  curve(dnorm(x, mean = mu_xbar, sd = sd_xbar), add = TRUE, col = "purple4", lwd = 2)
+}
+par(mfrow = c(1, 1))
+```
+
+## Sean $X_1, \dots, X_n$ variables aleatorias independientes e idénticamente distribuidas con distribución exponencial $\text{exp}(\lambda)$. Entonces, la suma $Y = \sum_{i=1}^{n} X_i$ sigue una distribución gamma $\text{gamma}(n, \lambda)$.
+
+### - Simula 1000 sumas de $n=5$ variables aleatorias $\text{exp}(\lambda = 1.5)$.
+
+```{r}
+#| label: exr-suma_exponenciales-n5
+#| echo: false
+set.seed(123)
+lambda_exp <- 1.5
+n_sim <- 1000
+n_val <- 5
+
+mat_exp <- matrix(rexp(n_sim * n_val, rate = lambda_exp), nrow = n_sim, ncol = n_val)
+sumas_5 <- rowSums(mat_exp)
+```
+
+### - Grafica el histograma de las sumas y superpone la densidad teórica de $\text{gamma}(5, 1.5)$.
+
+```{r}
+#| echo: false
+hist(sumas_5, probability = TRUE, col = "lightblue1", border = "white",
+     main = "Suma de n = 5 Exponenciales (lambda = 1.5)",
+     xlab = "Suma (Y)", ylab = "Densidad", breaks = 25)
+curve(dgamma(x, shape = n_val, rate = lambda_exp), add = TRUE, col = "blue4", lwd = 2.5)
+legend("topright", legend = c("Sumas simuladas", "Gamma(5, 1.5) Teórica"),
+       fill = c("lightblue1", NA), col = c(NA, "blue4"), lty = c(0, 1), lwd = c(0, 2.5))
+```
+
+### - Repite el ejercicio para $n=10$ y $n=20$ y observa cómo cambia la forma de la distribución.
+
+```{r}
+#| label: exr-suma_exponenciales-n10_20
+#| echo: false
+set.seed(123)
+lambda_exp <- 1.5
+n_sim <- 1000
+
+par(mfrow = c(1, 2))
+
+# Para n = 10
+sumas_10 <- rowSums(matrix(rexp(n_sim * 10, rate = lambda_exp), nrow = n_sim, ncol = 10))
+hist(sumas_10, probability = TRUE, col = "lightgreen", border = "white",
+     main = "Suma de n = 10 Exponenciales", xlab = "Suma (Y)", ylab = "Densidad", breaks = 25)
+curve(dgamma(x, shape = 10, rate = lambda_exp), add = TRUE, col = "darkgreen", lwd = 2)
+
+# Para n = 20
+sumas_20 <- rowSums(matrix(rexp(n_sim * 20, rate = lambda_exp), nrow = n_sim, ncol = 20))
+hist(sumas_20, probability = TRUE, col = "lightpink", border = "white",
+     main = "Suma de n = 20 Exponenciales", xlab = "Suma (Y)", ylab = "Densidad", breaks = 25)
+curve(dgamma(x, shape = 20, rate = lambda_exp), add = TRUE, col = "darkred", lwd = 2)
+
+par(mfrow = c(1, 1))
+```
+
+## Conclusión
+
+Las simulaciones efectuadas permitieron validar de manera empírica el Teorema Central del Límite aplicado a la distribución gamma, constatando que la varianza de las medias muestrales decrece inversamente con el tamaño de muestra $n$ y que los histogramas convergen hacia la curva normal teórica. Asimismo, la simulación de las sumas de variables exponenciales independientes confirmó la proposición teórica, evidenciando que la distribución resultante se ajusta fielmente a una distribución gamma con parámetro de forma igual al número de variables sumadas y conservando la tasa original.

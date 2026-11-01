@@ -1,0 +1,144 @@
+---
+title: "Distribución t de Student"
+author: "Maria Fernanda Yañez Obregón"
+format: html
+editor: visual
+---
+
+# Ejercicios Propuestos
+
+## Introducción
+
+En esta sección se examinan las propiedades teóricas y empíricas de la distribución t de Student. A través de simulación computacional en R, se analiza el efecto del aumento del tamaño de muestra sobre la media y la varianza muestrales, comparándolas con sus valores teóricos. Asimismo, se contrasta la densidad de una distribución t con la normal estándar para observar sus diferencias en las colas. Finalmente, se verifican las proposiciones formales sobre su construcción a partir de variables normales y ji-cuadrada independientes, así como el comportamiento del pivote estadístico basado en muestras normales.
+
+## Genera muestras aleatorias de tamaño 100, 300 y 1000 de una distribución t de Student con 5 grados de libertad. Para cada muestra:
+
+### 1. Calcula la media y varianza muestral; y compara con los valores teóricos.
+
+```{r}
+#| label: exr-muestras_tstudent
+#| echo: false
+set.seed(123)
+
+# Parámetros
+df_t <- 5
+tamanios <- c(100, 300, 1000)
+
+# Valores teóricos para t(df):
+# Media teórica = 0 (para df > 1)
+# Varianza teórica = df / (df - 2) (para df > 2)
+media_teorica <- 0
+varianza_teorica <- df_t / (df_t - 2)
+
+cat("--- VALORES TEÓRICOS t(5) --- \n")
+cat("Media Teórica:", media_teorica, "\n")
+cat("Varianza Teórica:", varianza_teorica, "\n\n")
+
+# 1. Cálculo de media y varianza muestral para n = 100, 300, 1000
+cat("--- COMPARACIÓN MUESTRAL --- \n")
+for (n in tamanios) {
+  muestra <- rt(n, df = df_t)
+  cat("Tamaño de muestra (n = ", n, "): \n", sep = "")
+  cat("  Media muestral: ", round(mean(muestra), 4), "\n", sep = "")
+  cat("  Varianza muestral: ", round(var(muestra), 4), "\n", sep = "")
+}
+```
+
+### 2. Para la muestra de mayor tamaño, realiza un histograma, superpone la función de densidad teórica de la variable aleatoria $t(5)$ y la función de densidad de una normal estándar.
+
+```{r}
+#| echo: false
+# 2. Histograma de la muestra de mayor tamaño (n = 1000) con curvas superpuestas
+n_max <- 1000
+muestra_max <- rt(n_max, df = df_t)
+
+hist(muestra_max, probability = TRUE, col = "lightskyblue1", border = "white",
+     main = "Muestra n=1000 de t(5) vs. PDF Teórica y Normal Estándar",
+     xlab = "Valores", ylab = "Densidad", breaks = 35, xlim = c(-4, 4))
+
+# PDF teórica de t(5)
+curve(dt(x, df = df_t), add = TRUE, col = "blue3", lwd = 2.5)
+
+# PDF teórica de N(0, 1)
+curve(dnorm(x, mean = 0, sd = 1), add = TRUE, col = "red", lty = 2, lwd = 2.5)
+
+legend("topright", legend = c("Muestra (Histograma)", "PDF Teórica t(5)", "PDF Normal N(0,1)"),
+       fill = c("lightskyblue1", NA, NA), col = c(NA, "blue3", "red"),
+       lty = c(0, 1, 2), lwd = c(0, 2.5, 2.5))
+```
+
+## Si $X\sim N(0,1)$ y $Y\sim \chi^2(n)$ son dos variables aleatorias independientes, entonces la variable aleatoria:
+
+$$T=\frac{X}{\sqrt{Y/n}}\sim t(n)$$
+
+## Genera una muestra aleatoria de de tamaño 1000 para $X\sim N(0,1)$ y $Y\sim \chi^2(10)$. Calcula la variable aleatoria $T$ y compara su histograma con la función de densidad teórica de $t(10)$.
+
+```{r}
+#| label: exr-relacion_normal_ji
+#| echo: false
+set.seed(123)
+
+n_sim <- 1000
+df_y <- 10  # Grados de libertad para Y
+
+# Generación de X ~ N(0,1) y Y ~ Chisq(10) independientes
+X <- rnorm(n_sim, mean = 0, sd = 1)
+Y <- rchisq(n_sim, df = df_y)
+
+# Construcción de la variable aleatoria T
+T_relacion <- X / sqrt(Y / df_y)
+
+# Comparación del histograma con la función de densidad teórica de t(10)
+hist(T_relacion, probability = TRUE, col = "peachpuff", border = "white",
+     main = expression(paste("Verificación: ", T == frac(X, sqrt(Y/n)), " ~ t(10)")),
+     xlab = "Valores de T", ylab = "Densidad", breaks = 30)
+
+curve(dt(x, df = df_y), add = TRUE, col = "chocolate4", lwd = 2.5)
+
+legend("topright", legend = c("T simulado", "PDF Teórica t(10)"),
+       fill = c("peachpuff", NA), col = c(NA, "chocolate4"),
+       lty = c(0, 1), lwd = c(0, 2.5))
+```
+
+## Sean $X_1,X_2,\ldots,X_n$ variables aleatorias independientes e idénticamente distribuidas como $N(\mu,\sigma^2)$. Entonces la variable aleatoria:
+
+$$T= \frac{\overline{X}-\mu}{S/\sqrt{n}}\sim t(n-1)$$
+
+en donde $\overline{X}=\frac{1}{n}\sum_{i=1}^n X_i$ y $S^2=\frac{1}{n-1}\sum_{i=1}^n (X_i-\overline{X})^2$.
+
+## Genera 1000 muestras aleatorias de tamaño 50 de una distribución normal estándar. Para cada muestra calcula la media muestral y la desviación estándar muestral. Luego calcula la variable aleatoria $T$ y compara su histograma con la función de densidad teórica de $t(49)$.
+
+```{r}
+#| label: exr-n_normales
+#| echo: false
+set.seed(123)
+
+k_muestras <- 1000
+n_tamano <- 50
+mu_pob <- 0
+sd_pob <- 1
+
+matriz_normales <- matrix(rnorm(k_muestras * n_tamano, mean = mu_pob, sd = sd_pob),
+                          nrow = k_muestras, ncol = n_tamano)
+
+medias_muestrales <- rowMeans(matriz_normales)
+desviaciones_muestrales <- apply(matriz_normales, 1, sd)
+
+T_muestral <- (medias_muestrales - mu_pob) / (desviaciones_muestrales / sqrt(n_tamano))
+
+df_teorico <- n_tamano - 1
+
+hist(T_muestral, probability = TRUE, col = "palegreen2", border = "white",
+     main = expression(paste("Verificación: ", T == frac(bar(X) - mu, S/sqrt(n)), " ~ t(49)")),
+     xlab = "Valores de T", ylab = "Densidad", breaks = 30)
+
+curve(dt(x, df = df_teorico), add = TRUE, col = "darkgreen", lwd = 2.5)
+
+legend("topright", legend = c("T muestral simulado", "PDF Teórica t(49)"),
+       fill = c("palegreen2", NA), col = c(NA, "darkgreen"),
+       lty = c(0, 1), lwd = c(0, 2.5))
+```
+
+## Conclusión
+
+Las simulaciones efectuadas permitieron confirmar experimentalmente las propiedades de la distribución t de Student. En primer lugar, se constató que la media y la varianza muestrales convergen adecuadamente hacia los valores teóricos a medida que el tamaño muestral crece, observándose además que la distribución t presenta colas más pesadas que la normal estándar. Por otro lado, la construcción empírica basada en el cociente de una variable normal estándar entre la raíz de una ji-cuadrada dividida por sus grados de libertad validó con precisión la forma matemática de la densidad $t(10)$. Finalmente, el análisis del estadístico estandarizado con la desviación muestral $S$ demostró que la variable pivote sigue exactamente una distribución $t(n-1)$, respaldando su uso fundamental en la inferencia estadística para muestras finitas.

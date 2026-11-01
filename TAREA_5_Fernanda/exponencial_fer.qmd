@@ -1,0 +1,93 @@
+---
+title: "Distribución Exponencial"
+author: "Maria Fernanda Yañez Obregón"
+format: html
+editor: visual
+---
+
+# Ejercicios Propuestos
+
+## Introducción
+
+En esta sección se analiza la distribución exponencial, utilizada comúnmente para modelar el tiempo entre eventos en procesos de Poisson. Mediante simulación computacional en R con distintos tamaños de muestra para un parámetro $\lambda = 0.8$, se calculan la media, varianza y mediana muestrales para contrastarlas con sus respectivos valores teóricos, ilustrando además la convergencia gráfica de los histogramas empíricos frente a la función de densidad teórica de la distribución.
+
+## Genera una simulación con tamaños de muestra de 10, 50, 100, 500 y 1000 observaciones de una distribución exponencial con $\lambda = 0.8$. Para cada tamaño de muestra:
+
+### 1. Calcula la media, varianza y mediana muestral.
+
+```{r}
+#| label: exr-simulacion_exponencial-punto1
+#| echo: false
+set.seed(123)
+
+lambda_exp <- 0.8
+tamanios <- c(10, 50, 100, 500, 1000)
+
+cat("--- 1. CÁLCULO DE ESTADÍSTICOS MUESTRALES ---\n")
+resultados_estadisticos <- list()
+
+for (n in tamanios) {
+  muestra <- rexp(n, rate = lambda_exp)
+  resultados_estadisticos[[as.character(n)]] <- list(
+    media = mean(muestra),
+    varianza = var(muestra),
+    mediana = median(muestra)
+  )
+  cat(sprintf("n = %4d -> Media: %.4f | Varianza: %.4f | Mediana: %.4f\n", 
+              n, mean(muestra), var(muestra), median(muestra)))
+}
+```
+
+### 2. Compara estos estadísticos con los valores teóricos.
+
+```{r}
+#| label: exr-simulacion_exponencial-punto2
+#| echo: false
+set.seed(123)
+
+lambda_exp <- 0.8
+media_teorica <- 1 / lambda_exp
+varianza_teorica <- 1 / (lambda_exp^2)
+mediana_teorica <- log(2) / lambda_exp
+
+cat("--- VALORES TEÓRICOS ---\n")
+cat(sprintf("Media teórica: %.4f\n", media_teorica))
+cat(sprintf("Varianza teórica: %.4f\n", varianza_teorica))
+cat(sprintf("Mediana teórica: %.4f\n\n", mediana_teorica))
+
+cat("--- 2. COMPARACIÓN CON VALORES TEÓRICOS ---\n")
+tamanios <- c(10, 50, 100, 500, 1000)
+for (n in tamanios) {
+  muestra <- rexp(n, rate = lambda_exp)
+  cat(sprintf("n = %d:\n", n))
+  cat(sprintf("  Media muestral: %.4f (Dif: %.4f)\n", mean(muestra), mean(muestra) - media_teorica))
+  cat(sprintf("  Varianza muestral: %.4f (Dif: %.4f)\n", var(muestra), var(muestra) - varianza_teorica))
+  cat(sprintf("  Mediana muestral: %.4f (Dif: %.4f)\n\n", median(muestra), median(muestra) - mediana_teorica))
+}
+```
+
+### 3. Grafica la distribución de las muestras junto con la densidad teórica.
+
+```{r}
+#| label: exr-simulacion_exponencial-punto3
+#| echo: false
+set.seed(123)
+
+lambda_exp <- 0.8
+tamanios <- c(10, 50, 100, 500, 1000)
+
+par(mfrow = c(2, 3))
+
+for (n in tamanios) {
+  muestra <- rexp(n, rate = lambda_exp)
+  hist(muestra, probability = TRUE, col = "lightgoldenrod1", border = "white",
+       main = paste0("n = ", n), xlab = "Valores", ylab = "Densidad", breaks = 20)
+  curve(dexp(x, rate = lambda_exp), add = TRUE, col = "darkorange3", lwd = 2)
+}
+
+par(mfrow = c(1, 1))
+```
+
+## Conclusión
+
+Los resultados de la simulación permitieron corroborar las propiedades teóricas de la distribución exponencial. Se observó que, a medida que el tamaño de muestra se incrementa, los estadísticos muestrales (media, varianza y mediana) convergen de manera más precisa hacia sus contrapartes teóricas. Asimismo, las gráficas comparativas evidenciaron cómo los histogramas de las muestras se ajustan de forma cada vez más fiel a la curva de densidad teórica conforme crece el número de observaciones.

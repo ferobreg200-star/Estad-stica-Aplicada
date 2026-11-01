@@ -1,0 +1,93 @@
+---
+title: "Distribución F"
+author: "Maria Fernanda Yañez Obregón"
+format: html
+editor: visual
+---
+
+# Ejercicios Propuestos
+
+## Introducción
+
+En esta sección se exploran las propiedades teóricas de la distribución F de Snedecor mediante simulación numérica en R. A través de la generación de muestras aleatorias bajo diferentes configuraciones paramétricas, se construyen histogramas de densidad empíricos para contrastarlos directamente con sus funciones de densidad de probabilidad (PDF) teóricas correspondientes, validando tres propiedades fundamentales: la relación con la distribución t de Student al cuadrado, la inversa recíproca de grados de libertad, y su construcción formal como el cociente de dos variables ji-cuadrada independientes divididas entre sus respectivos grados de libertad.
+
+## Por medio de simulación numérica (es decir, generando muestras aleatorias de una distribución F con diferentes parámetros, mostrando el histograma de densidad de las muestras y comparándolo con la PDF teórica correspondiente), verifique las siguientes propiedades:
+
+### a) Si $X\sim t(n)$ entonces $X^2 \sim F(1,n)$.
+
+```{r}
+#| label: exr-f-prop-a
+#| echo: false
+set.seed(123)
+n_sim <- 10000
+n_df <- 10  # Grados de libertad para la t de Student
+
+# 1. Generar muestras de una distribución t de Student con n grados de libertad
+X_t <- rt(n_sim, df = n_df)
+
+# 2. Elevar al cuadrado la muestra de t de Student
+X_cuadrado <- X_t^2
+
+# 3. Comparar con una distribución F(1, n_df) teórica mediante histograma y PDF
+hist(X_cuadrado, probability = TRUE, col = "mistyrose", border = "white",
+     main = expression(paste("Verificación: ", X^2, " ~ F(1, ", n, ")")),
+     xlab = "Valores", ylab = "Densidad", breaks = 50, xlim = c(0, 15))
+curve(df(x, df1 = 1, df2 = n_df), add = TRUE, col = "red3", lwd = 2.5)
+legend("topright", legend = c(expression(X^2~~"simulado"), "PDF Teórica F(1, n)"),
+       fill = c("mistyrose", NA), col = c(NA, "red3"), lty = c(0, 1), lwd = c(0, 2.5))
+```
+
+### b) Si $X \sim F(a,b)$ entonces $\frac{1}{X} \sim F(b,a)$.
+
+```{r}
+#| label: exr-f-prop-b
+#| echo: false
+set.seed(123)
+n_sim <- 10000
+a_df <- 5   # Primer parámetro (df1)
+b_df <- 8   # Segundo parámetro (df2)
+
+# 1. Generar muestras de una distribución F(a, b)
+X_f <- rf(n_sim, df1 = a_df, df2 = b_df)
+
+# 2. Obtener el recíproco 1/X
+reciproco_X <- 1 / X_f
+
+# 3. Comparar con una distribución F(b, a) teórica
+hist(reciproco_X, probability = TRUE, col = "lightcyan", border = "white",
+     main = expression(paste("Verificación: ", 1/X, " ~ F(b, a)")),
+     xlab = "Valores", ylab = "Densidad", breaks = 60, xlim = c(0, 5))
+curve(df(x, df1 = b_df, df2 = a_df), add = TRUE, col = "darkcyan", lwd = 2.5)
+legend("topright", legend = c(expression(1/X~~"simulado"), "PDF Teórica F(b, a)"),
+       fill = c("lightcyan", NA), col = c(NA, "darkcyan"), lty = c(0, 1), lwd = c(0, 2.5))
+```
+
+### c) Si $X \sim \chi^2(a)$ y $Y \sim \chi^2(b)$ son independientes, entonces $\frac{X/a}{Y/b} \sim F(a,b)$.
+
+```{r}
+#| label: exr-f-prop-c
+#| echo: false
+set.seed(123)
+n_sim <- 10000
+a_df <- 6   # Grados de libertad para X (chi-cuadrada 1)
+b_df <- 12  # Grados de libertad para Y (chi-cuadrada 2)
+
+# 1. Generar muestras independientes de distribuciones chi-cuadrada
+X_chi <- rchisq(n_sim, df = a_df)
+Y_chi <- rchisq(n_sim, df = b_df)
+
+# 2. Construir el cociente estandarizado (X / a) / (Y / b)
+cociente_f <- (X_chi / a_df) / (Y_chi / b_df)
+
+# 3. Comparar con la distribución F(a, b) teórica
+hist(cociente_f, probability = TRUE, col = "thistle1", border = "white",
+     main = expression(paste("Verificación: ", frac(X/a, Y/b), " ~ F(a, b)")),
+     xlab = "Valores", ylab = "Densidad", breaks = 50, xlim = c(0, 5))
+curve(df(x, df1 = a_df, df2 = b_df), add = TRUE, col = "purple4", lwd = 2.5)
+legend("topright", legend = c(expression("Cociente simulado"), "PDF Teórica F(a, b)"),
+       fill = c("thistle1", NA), col = c(NA, "purple4"), lty = c(0, 1), lwd = c(0, 2.5))
+```
+
+## Conclusión
+
+A través de la simulación numérica realizada, se comprobaron de manera gráfica y empírica las principales propiedades analíticas de la distribución F. En primer lugar, se corroboró que el cuadrado de una variable con distribución t de Student se ajusta exactamente a una distribución F con numerador de 1 grado de libertad. Asimismo, se validó la propiedad de reciprocidad, demostrando que la inversa de una variable F(a, b) sigue una distribución F(b, a). Finalmente, se confirmó la definición estructural de la distribución F al comprobar que el cociente de dos variables ji-cuadrada independientes divididas entre sus respectivos grados de libertad converge de manera precisa hacia la curva teórica esperada.

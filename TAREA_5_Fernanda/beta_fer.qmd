@@ -1,0 +1,133 @@
+---
+title: "Distribución Beta"
+author: "Maria Fernanda Yañez Obregón"
+format: html
+editor: visual
+---
+
+# Ejercicios Propuestos
+
+## Introducción
+
+En esta sección se analiza la distribución beta, una familia de distribuciones de probabilidad continua definida en el intervalo $[0, 1]$, parametrizada por dos parámetros de forma $\alpha$ y $\beta$. A través de simulaciones en R, se estudia la Ley de los Grandes Números mediante gráficas de convergencia tanto para la media como para la varianza muestral a medida que se incrementa el tamaño de la muestra. Asimismo, se evalúa visualmente el comportamiento de la distribución para muestras grandes frente a su función de densidad teórica (PDF) y se verifica el cumplimiento del Teorema Central del Límite (TCL) para las medias muestrales.
+
+## Simulación y visualización
+
+### Genera muestras de diferentes tamaños desde 100 hasta 10000 de una distribución beta(2,5).
+
+#### 1. Genera una gráfica de convergencia de la media muestral a la media teórica a medida que aumenta el tamaño de la muestra.
+
+```{r}
+#| label: exr-beta-convergencia
+#| echo: false
+set.seed(123)
+
+# Parámetros de la distribución Beta(2, 5)
+alpha_p <- 2
+beta_p <- 5
+
+# Valores teóricos para Beta(alpha, beta):
+# Media teórica = alpha / (alpha + beta)
+# Varianza teórica = (alpha * beta) / ((alpha + beta)^2 * (alpha + beta + 1))
+media_teorica <- alpha_p / (alpha_p + beta_p)
+varianza_teorica <- (alpha_p * beta_p) / ((alpha_p + beta_p)^2 * (alpha_p + beta_p + 1))
+
+# Tamaños de muestra desde 100 hasta 10000
+tamanios <- seq(100, 10000, by = 100)
+medias_muestrales <- numeric(length(tamanios))
+varianzas_muestrales <- numeric(length(tamanios))
+
+# Simulación para cada tamaño de muestra
+for (i in seq_along(tamanios)) {
+  muestra <- rbeta(tamanios[i], shape1 = alpha_p, shape2 = beta_p)
+  medias_muestrales[i] <- mean(muestra)
+  varianzas_muestrales[i] <- var(muestra)
+}
+
+# 1. Gráfica de convergencia de la media muestral
+plot(tamanios, medias_muestrales, type = "l", col = "royalblue", lwd = 2,
+     main = "Convergencia de la Media Muestral (Beta(2,5))",
+     xlab = "Tamaño de la muestra (n)", ylab = "Media Muestral")
+abline(h = media_teorica, col = "red", lty = 2, lwd = 2)
+legend("topright", legend = c("Media Muestral", "Media Teórica"),
+       col = c("royalblue", "red"), lty = c(1, 2), lwd = 2)
+```
+
+#### 2. De manera análoga, genera una gráfica de convergencia de la varianza muestral a la varianza teórica a medida que aumenta el tamaño de la muestra.
+
+```{r}
+#| echo: false
+# 2. Gráfica de convergencia de la varianza muestral
+plot(tamanios, varianzas_muestrales, type = "l", col = "darkorange", lwd = 2,
+     main = "Convergencia de la Varianza Muestral (Beta(2,5))",
+     xlab = "Tamaño de la muestra (n)", ylab = "Varianza Muestral")
+abline(h = varianza_teorica, col = "red", lty = 2, lwd = 2)
+legend("topright", legend = c("Varianza Muestral", "Varianza Teórica"),
+       col = c("darkorange", "red"), lty = c(1, 2), lwd = 2)
+```
+
+#### 3. Para el tamaño de muestra más grande, genera un histograma de la muestra junto con la curva de la PDF teórica superpuesta.
+
+```{r}
+#| label: exr-beta-histograma
+#| echo: false
+set.seed(123)
+
+# Para el tamaño de muestra más grande (n = 10,000)
+n_grande <- 10000
+muestra_grande <- rbeta(n_grande, shape1 = 2, shape2 = 5)
+
+# Histograma de la muestra junto con la curva de la PDF teórica (dbeta)
+hist(muestra_grande, probability = TRUE, col = "plum1", border = "white",
+     main = "Histograma y PDF Teórica Beta(2, 5) (n = 10,000)",
+     xlab = "Valores", ylab = "Densidad", breaks = 40)
+curve(dbeta(x, shape1 = 2, shape2 = 5), add = TRUE, col = "purple4", lwd = 2.5)
+legend("topright", legend = c("Muestra (Histograma)", "PDF Teórica"),
+       fill = c("plum1", NA), col = c(NA, "purple4"), lty = c(0, 1), lwd = c(0, 2.5))
+```
+
+## Teorema Central del Límite
+
+### Para diferentes tamaños de muestra verifica el Teorema Central del Límite (TCL) utilizando la distribución beta(2,5).
+
+```{r}
+#| label: exr-tcl_beta
+#| echo: false
+set.seed(123)
+
+# Parámetros del TCL
+k_muestras <- 1000       # Número de muestras
+n_tamano <- 30          # Tamaño de cada muestra
+alpha_p <- 2
+beta_p <- 5
+
+# Generación de k muestras de tamaño n
+matriz_beta <- matrix(rbeta(k_muestras * n_tamano, shape1 = alpha_p, shape2 = beta_p),
+                      nrow = k_muestras, ncol = n_tamano)
+
+# Cálculo de las medias muestrales
+medias_muestrales_tcl <- rowMeans(matriz_beta)
+
+# Parámetros teóricos de la media muestral según el TCL:
+# Media de X_bar = mu
+# Varianza de X_bar = sigma^2 / n
+mu_teorica_beta <- alpha_p / (alpha_p + beta_p)
+var_poblacional_beta <- (alpha_p * beta_p) / ((alpha_p + beta_p)^2 * (alpha_p + beta_p + 1))
+sd_xbar_beta <- sqrt(var_poblacional_beta / n_tamano)
+
+# Visualización y verificación gráfica del TCL
+hist(medias_muestrales_tcl, probability = TRUE, col = "lightblue", border = "white",
+     main = "Verificación del TCL para Medias Muestrales (Beta(2,5))",
+     xlab = "Medias Muestrales", ylab = "Densidad", breaks = 30)
+curve(dnorm(x, mean = mu_teorica_beta, sd = sd_xbar_beta), add = TRUE, col = "navy", lwd = 2.5)
+legend("topright", legend = c("Medias Muestrales", "Normal Teórica (TCL)"),
+       fill = c("lightblue", NA), col = c(NA, "navy"), lty = c(0, 1), lwd = c(0, 2.5))
+
+cat("--- VERIFICACIÓN TCL (Beta) --- \n")
+cat("Media teórica de X_bar:", mu_teorica_beta, "| Media de medias simuladas:", mean(medias_muestrales_tcl), "\n")
+cat("Desv. Est. teórica de X_bar:", sd_xbar_beta, "| Desv. Est. de medias simuladas:", sd(medias_muestrales_tcl), "\n")
+```
+
+## Conclusión
+
+A través de las simulaciones realizadas para la distribución beta, se comprobó empíricamente la Ley de los Grandes Números al evidenciar cómo la media y la varianza muestrales convergen hacia sus respectivos valores teóricos conforme se incrementa el tamaño de la muestra. Asimismo, la superposición del histograma con la función de densidad teórica en el escenario de mayor tamaño muestral confirmó el correcto ajuste del modelo. Finalmente, la verificación gráfica y numérica validó la eficacia del Teorema Central del Límite, mostrando que la distribución de las medias muestrales adopta una forma normal aun cuando la distribución poblacional original presenta asimetría.
