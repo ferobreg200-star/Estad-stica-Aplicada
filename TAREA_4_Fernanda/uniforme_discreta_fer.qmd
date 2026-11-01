@@ -1,0 +1,93 @@
+---
+title: "Distribución Uniforme Discreta"
+author: "Maria Fernanda Yañez Obregón"
+format: html
+editor: visual
+---
+
+# Ejercicios Propuestos
+
+## Introducción
+
+En esta sección se aborda la distribución uniforme discreta, caracterizada por asignar la misma probabilidad a un conjunto finito de valores igualmente espaciados. Mediante simulación computacional en R, se comparan las frecuencias empíricas obtenidas a partir de observaciones aleatorias frente a sus valores teóricos esperados. Asimismo, se analiza la distribución de las medias muestrales para comprobar la vigencia del Teorema Central del Límite en este modelo.
+
+## Simular 500 observaciones de una distribución uniforme discreta en {0, 1, 2, 3, 4} y compara las frecuencias observadas con las teóricas.
+
+```{r}
+#| label: exr-simulacion_1
+#| echo: false
+set.seed(123)
+
+# Parámetros
+n_obs <- 500
+valores <- 0:4
+prob_teorica <- 1 / length(valores) # Probabilidad teórica para cada valor (1/5 = 0.2)
+
+# Simulación de 500 observaciones con sample()
+observaciones <- sample(valores, size = n_obs, replace = TRUE)
+
+# Frecuencias absolutas y relativas observadas
+freq_abs <- table(observaciones)
+freq_relativa <- prop.table(freq_abs)
+
+# Frecuencias teóricas esperadas
+freq_teorica_esp <- rep(prob_teorica * n_obs, length(valores))
+
+# Gráfica comparativa de frecuencias observadas vs teóricas
+comparacion <- rbind(Observada = freq_abs, Teorica = freq_teorica_esp)
+barplot(comparacion, beside = TRUE, col = c("dodgerblue", "orange"),
+        main = "Frecuencias Observadas vs. Teóricas Uniforme Discreta {0,1,2,3,4}",
+        xlab = "Valores", ylab = "Frecuencia")
+legend("topright", legend = c("Observada", "Teórica"), fill = c("dodgerblue", "orange"))
+
+# Impresión de resultados en consola
+cat("--- COMPARACIÓN DE FRECUENCIAS ---\n")
+print(rbind(Frec.Relativa.Obs = freq_relativa, Prob.Teorica = rep(prob_teorica, length(valores))))
+```
+
+## Generar $k=1000$ muestras de tamaño $n=50$ de una distribución uniforme discreta en $\{1, 2, \dots, 9, 10\}$ y verificar el Teorema Central del Límite para las medias muestrales.
+
+```{r}
+#| label: exr-simulacion_2
+#| echo: false
+set.seed(123)
+
+# Parámetros
+k <- 1000           # Número de muestras
+n_muestras <- 50    # Tamaño de cada muestra
+valores_u <- 1:10   # Rango de la uniforme discreta
+
+# Generación de k muestras de tamaño 50
+muestras_unif <- matrix(sample(valores_u, size = k * n_muestras, replace = TRUE), 
+                        nrow = k, ncol = n_muestras)
+
+# Cálculo de las medias muestrales
+medias_muestrales <- rowMeans(muestras_unif)
+
+# Parámetros teóricos de la Uniforme Discreta en {a, ..., b}:
+# Media (mu) = (a + b) / 2
+# Varianza poblacional (sigma^2) = ((b - a + 1)^2 - 1) / 12
+a <- min(valores_u)
+b <- max(valores_u)
+mu_teorica <- (a + b) / 2
+var_poblacional <- ((b - a + 1)^2 - 1) / 12
+var_teorica <- var_poblacional / n_muestras
+sd_teorica <- sqrt(var_teorica)
+
+# Visualización y verificación del TCL
+hist(medias_muestrales, probability = TRUE, col = "lightblue2", 
+     main = "Verificación del TCL para Medias Muestrales (Uniforme Discreta)",
+     xlab = "Medias Muestrales", ylab = "Densidad", breaks = 25)
+curve(dnorm(x, mean = mu_teorica, sd = sd_teorica), add = TRUE, col = "navy", lwd = 2)
+legend("topright", legend = c("Medias muestrales", "Normal teórica (TCL)"),
+       fill = c("lightblue2", NA), col = c(NA, "navy"), lty = c(0, 1), lwd = c(0, 2))
+
+# Comparación numérica para validar
+cat("--- COMPARACIÓN TEOREMA CENTRAL DEL LÍMITE (Uniforme Discreta) --- \n")
+cat("Media teórica de X_bar:", mu_teorica, "| Media de medias simuladas:", mean(medias_muestrales), "\n")
+cat("Desv. Est. teórica de X_bar:", sd_teorica, "| Desv. Est. de medias simuladas:", sd(medias_muestrales), "\n")
+```
+
+## Conclusión
+
+Los resultados de la simulación mostraron una estrecha coincidencia entre las frecuencias observadas y las teóricas, reflejando la equiprobabilidad propia de la distribución uniforme discreta. Por otro lado, la verificación gráfica y numérica del Teorema Central del Límite confirmó que las medias muestrales tienden a distribuirse de manera normal conforme aumenta el tamaño de la muestra, validando su aplicación en la inferencia estadística.
