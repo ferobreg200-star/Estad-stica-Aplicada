@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Maria Fernanda Yañez Obregón">
+
+<title>Distribución Normal</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="Tarea_3_Fer_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Tarea_3_Fer_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="Tarea_3_Fer_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="Tarea_3_Fer_files/libs/quarto-html/popper.min.js"></script>
+<script src="Tarea_3_Fer_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Tarea_3_Fer_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Tarea_3_Fer_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Tarea_3_Fer_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Tarea_3_Fer_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Tarea_3_Fer_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Tarea_3_Fer_files/libs/bootstrap/bootstrap-b310400ef77558f160eace057e66f78e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="Tarea_3_Fer_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="Tarea_3_Fer_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#ejercicios-propuestos" id="toc-ejercicios-propuestos" class="nav-link active" data-scroll-target="#ejercicios-propuestos">Ejercicios Propuestos</a>
+  <ul class="collapse">
+  <li><a href="#ejercicio-1" id="toc-ejercicio-1" class="nav-link" data-scroll-target="#ejercicio-1">Ejercicio 1</a>
+  <ul class="collapse">
+  <li><a href="#simula-una-muestra-de-500-estudiantes" id="toc-simula-una-muestra-de-500-estudiantes" class="nav-link" data-scroll-target="#simula-una-muestra-de-500-estudiantes">1. Simula una muestra de 500 estudiantes</a></li>
+  <li><a href="#calcula-la-media-mediana-y-desviación-estándar-muestral" id="toc-calcula-la-media-mediana-y-desviación-estándar-muestral" class="nav-link" data-scroll-target="#calcula-la-media-mediana-y-desviación-estándar-muestral">2. Calcula la media, mediana y desviación estándar muestral</a></li>
+  <li><a href="#porcentaje-de-estudiantes-que-mide-más-de-180-cm" id="toc-porcentaje-de-estudiantes-que-mide-más-de-180-cm" class="nav-link" data-scroll-target="#porcentaje-de-estudiantes-que-mide-más-de-180-cm">3. Porcentaje de estudiantes que mide más de 180 cm</a></li>
+  <li><a href="#altura-del-estudiante-en-el-percentil-25" id="toc-altura-del-estudiante-en-el-percentil-25" class="nav-link" data-scroll-target="#altura-del-estudiante-en-el-percentil-25">4. Altura del estudiante en el percentil 25</a></li>
+  <li><a href="#histograma-de-la-muestra-con-densidad-teórica-superpuesta" id="toc-histograma-de-la-muestra-con-densidad-teórica-superpuesta" class="nav-link" data-scroll-target="#histograma-de-la-muestra-con-densidad-teórica-superpuesta">5. Histograma de la muestra con densidad teórica superpuesta</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-2" id="toc-ejercicio-2" class="nav-link" data-scroll-target="#ejercicio-2">Ejercicio 2</a>
+  <ul class="collapse">
+  <li><a href="#simular-un-día-de-producción-1000-mediciones" id="toc-simular-un-día-de-producción-1000-mediciones" class="nav-link" data-scroll-target="#simular-un-día-de-producción-1000-mediciones">1. Simular un día de producción (1000 mediciones)</a></li>
+  <li><a href="#qué-porcentaje-del-tiempo-la-temperatura-está-fuera-de-especificación" id="toc-qué-porcentaje-del-tiempo-la-temperatura-está-fuera-de-especificación" class="nav-link" data-scroll-target="#qué-porcentaje-del-tiempo-la-temperatura-está-fuera-de-especificación">2. ¿Qué porcentaje del tiempo la temperatura está fuera de especificación?</a></li>
+  <li><a href="#si-el-proceso-se-descentra-a-μ-355c-cómo-cambia-la-calidad" id="toc-si-el-proceso-se-descentra-a-μ-355c-cómo-cambia-la-calidad" class="nav-link" data-scroll-target="#si-el-proceso-se-descentra-a-μ-355c-cómo-cambia-la-calidad">3. Si el proceso se descentra a μ = 355°C, ¿cómo cambia la calidad?</a></li>
+  <li><a href="#qué-σ-se-necesita-para-tener-99.9-de-productos-dentro-de-especificación" id="toc-qué-σ-se-necesita-para-tener-99.9-de-productos-dentro-de-especificación" class="nav-link" data-scroll-target="#qué-σ-se-necesita-para-tener-99.9-de-productos-dentro-de-especificación">4. ¿Qué σ se necesita para tener 99.9% de productos dentro de especificación?</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-3" id="toc-ejercicio-3" class="nav-link" data-scroll-target="#ejercicio-3">Ejercicio 3</a>
+  <ul class="collapse">
+  <li><a href="#simula-las-ventas-de-24-meses." id="toc-simula-las-ventas-de-24-meses." class="nav-link" data-scroll-target="#simula-las-ventas-de-24-meses.">1. Simula las ventas de 24 meses.</a></li>
+  <li><a href="#cuál-es-la-probabilidad-de-tener-ventas-superiores-a-60000-pesos" id="toc-cuál-es-la-probabilidad-de-tener-ventas-superiores-a-60000-pesos" class="nav-link" data-scroll-target="#cuál-es-la-probabilidad-de-tener-ventas-superiores-a-60000-pesos">2. ¿Cuál es la probabilidad de tener ventas superiores a 60,000 pesos?</a></li>
+  <li><a href="#en-cuántos-meses-se-espera-tener-ventas-por-debajo-de-30000-pesos" id="toc-en-cuántos-meses-se-espera-tener-ventas-por-debajo-de-30000-pesos" class="nav-link" data-scroll-target="#en-cuántos-meses-se-espera-tener-ventas-por-debajo-de-30000-pesos">3. ¿En cuántos meses se espera tener ventas por debajo de 30,000 pesos?</a></li>
+  <li><a href="#calcula-el-rango-intercuartílico-de-las-ventas" id="toc-calcula-el-rango-intercuartílico-de-las-ventas" class="nav-link" data-scroll-target="#calcula-el-rango-intercuartílico-de-las-ventas">4. Calcula el rango intercuartílico de las ventas</a></li>
+  <li><a href="#si-la-meta-es-superar-45000-pesos-qué-porcentaje-de-meses-se-cumple" id="toc-si-la-meta-es-superar-45000-pesos-qué-porcentaje-de-meses-se-cumple" class="nav-link" data-scroll-target="#si-la-meta-es-superar-45000-pesos-qué-porcentaje-de-meses-se-cumple">5. Si la meta es superar 45,000 pesos, ¿qué porcentaje de meses se cumple?</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-4" id="toc-ejercicio-4" class="nav-link" data-scroll-target="#ejercicio-4">Ejercicio 4</a>
+  <ul class="collapse">
+  <li><a href="#simula-la-vida-útil-de-800-baterías" id="toc-simula-la-vida-útil-de-800-baterías" class="nav-link" data-scroll-target="#simula-la-vida-útil-de-800-baterías">1. Simula la vida útil de 800 baterías</a></li>
+  <li><a href="#qué-garantía-en-horas-cubre-al-95-de-las-baterías" id="toc-qué-garantía-en-horas-cubre-al-95-de-las-baterías" class="nav-link" data-scroll-target="#qué-garantía-en-horas-cubre-al-95-de-las-baterías">2. ¿Qué garantía (en horas) cubre al 95% de las baterías?</a></li>
+  <li><a href="#si-se-venden-10000-baterías-con-garantía-de-900-horas-cuántas-se-espera-que-fallen" id="toc-si-se-venden-10000-baterías-con-garantía-de-900-horas-cuántas-se-espera-que-fallen" class="nav-link" data-scroll-target="#si-se-venden-10000-baterías-con-garantía-de-900-horas-cuántas-se-espera-que-fallen">3. Si se venden 10,000 baterías con garantía de 900 horas, ¿cuántas se espera que fallen?</a></li>
+  <li><a href="#compara-la-media-y-mediana-de-tu-simulación-con-los-valores-teóricos" id="toc-compara-la-media-y-mediana-de-tu-simulación-con-los-valores-teóricos" class="nav-link" data-scroll-target="#compara-la-media-y-mediana-de-tu-simulación-con-los-valores-teóricos">4. Compara la media y mediana de tu simulación con los valores teóricos</a></li>
+  <li><a href="#cuál-es-el-percentil-10-de-la-distribución" id="toc-cuál-es-el-percentil-10-de-la-distribución" class="nav-link" data-scroll-target="#cuál-es-el-percentil-10-de-la-distribución">5. ¿Cuál es el percentil 10 de la distribución?</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-5" id="toc-ejercicio-5" class="nav-link" data-scroll-target="#ejercicio-5">Ejercicio 5</a>
+  <ul class="collapse">
+  <li><a href="#simula-1000-mediciones" id="toc-simula-1000-mediciones" class="nav-link" data-scroll-target="#simula-1000-mediciones">1. Simula 1000 mediciones</a></li>
+  <li><a href="#qué-porcentaje-de-errores-está-entre--5-y-5-unidades" id="toc-qué-porcentaje-de-errores-está-entre--5-y-5-unidades" class="nav-link" data-scroll-target="#qué-porcentaje-de-errores-está-entre--5-y-5-unidades">2. ¿Qué porcentaje de errores está entre -5 y +5 unidades?</a></li>
+  <li><a href="#calcula-la-probabilidad-de-que-un-error-sea-mayor-a-6-unidades-en-valor-absoluto" id="toc-calcula-la-probabilidad-de-que-un-error-sea-mayor-a-6-unidades-en-valor-absoluto" class="nav-link" data-scroll-target="#calcula-la-probabilidad-de-que-un-error-sea-mayor-a-6-unidades-en-valor-absoluto">3. Calcula la probabilidad de que un error sea mayor a 6 unidades en valor absoluto</a></li>
+  <li><a href="#si-se-considera-preciso-un-error-le-3-unidades-qué-porcentaje-de-mediciones-son-precisas" id="toc-si-se-considera-preciso-un-error-le-3-unidades-qué-porcentaje-de-mediciones-son-precisas" class="nav-link" data-scroll-target="#si-se-considera-preciso-un-error-le-3-unidades-qué-porcentaje-de-mediciones-son-precisas">4. Si se considera “preciso” un error <span class="math inline">\(\le 3\)</span> unidades, ¿qué porcentaje de mediciones son precisas?</a></li>
+  <li><a href="#verifica-que-la-distribución-es-simétrica-alrededor-de-0" id="toc-verifica-que-la-distribución-es-simétrica-alrededor-de-0" class="nav-link" data-scroll-target="#verifica-que-la-distribución-es-simétrica-alrededor-de-0">5. Verifica que la distribución es simétrica alrededor de 0</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-6" id="toc-ejercicio-6" class="nav-link" data-scroll-target="#ejercicio-6">Ejercicio 6</a>
+  <ul class="collapse">
+  <li><a href="#simula-200-estudiantes-de-cada-grupo" id="toc-simula-200-estudiantes-de-cada-grupo" class="nav-link" data-scroll-target="#simula-200-estudiantes-de-cada-grupo">1. Simula 200 estudiantes de cada grupo</a></li>
+  <li><a href="#qué-porcentaje-de-estudiantes-del-grupo-a-supera-la-media-del-grupo-b" id="toc-qué-porcentaje-de-estudiantes-del-grupo-a-supera-la-media-del-grupo-b" class="nav-link" data-scroll-target="#qué-porcentaje-de-estudiantes-del-grupo-a-supera-la-media-del-grupo-b">2. ¿Qué porcentaje de estudiantes del Grupo A supera la media del Grupo B?</a></li>
+  <li><a href="#cuál-es-la-probabilidad-de-que-un-estudiante-del-grupo-b-tenga-puntuación-menor-a-70" id="toc-cuál-es-la-probabilidad-de-que-un-estudiante-del-grupo-b-tenga-puntuación-menor-a-70" class="nav-link" data-scroll-target="#cuál-es-la-probabilidad-de-que-un-estudiante-del-grupo-b-tenga-puntuación-menor-a-70">3. ¿Cuál es la probabilidad de que un estudiante del Grupo B tenga puntuación menor a 70?</a></li>
+  <li><a href="#compara-las-distribuciones-visualmente" id="toc-compara-las-distribuciones-visualmente" class="nav-link" data-scroll-target="#compara-las-distribuciones-visualmente">4. Compara las distribuciones visualmente</a></li>
+  <li><a href="#a-partir-de-qué-puntuación-está-el-10-superior-de-cada-grupo" id="toc-a-partir-de-qué-puntuación-está-el-10-superior-de-cada-grupo" class="nav-link" data-scroll-target="#a-partir-de-qué-puntuación-está-el-10-superior-de-cada-grupo">5. ¿A partir de qué puntuación está el 10% superior de cada grupo?</a></li>
+  </ul></li>
+  <li><a href="#conclusión-general" id="toc-conclusión-general" class="nav-link" data-scroll-target="#conclusión-general">Conclusión General</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Distribución Normal</h1>
+<p class="subtitle lead">Licenciatura en Economía Industrial</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Maria Fernanda Yañez Obregón </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<style>
+main.content {
+text-align: justify}
+</style>
+<section id="ejercicios-propuestos" class="level1">
+<h1>Ejercicios Propuestos</h1>
+<section id="ejercicio-1" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-1">Ejercicio 1</h2>
+<section id="simula-una-muestra-de-500-estudiantes" class="level3">
+<h3 class="anchored" data-anchor-id="simula-una-muestra-de-500-estudiantes">1. Simula una muestra de 500 estudiantes</h3>
+<section id="para-analizar-cómo-se-comportan-las-alturas-de-los-estudiantes-universitarios-generamos-una-muestra-simulada-de-500-personas-a-partir-de-una-distribución-normal-con-media-de-170-cm-y-desviación-estándar-de-8-cm.-usamos-la-función-set.seed-para-asegurar-que-la-generación-aleatoria-sea-fija." class="level5">
+<h5 class="anchored" data-anchor-id="para-analizar-cómo-se-comportan-las-alturas-de-los-estudiantes-universitarios-generamos-una-muestra-simulada-de-500-personas-a-partir-de-una-distribución-normal-con-media-de-170-cm-y-desviación-estándar-de-8-cm.-usamos-la-función-set.seed-para-asegurar-que-la-generación-aleatoria-sea-fija.">Para analizar cómo se comportan las alturas de los estudiantes universitarios, generamos una muestra simulada de 500 personas a partir de una distribución Normal con media de 170 cm y desviación estándar de 8 cm. Usamos la función set.seed() para asegurar que la generación aleatoria sea fija.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 165.5162 168.1586 182.4697 170.5641 171.0343 183.7205</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="calcula-la-media-mediana-y-desviación-estándar-muestral" class="level3">
+<h3 class="anchored" data-anchor-id="calcula-la-media-mediana-y-desviación-estándar-muestral">2. Calcula la media, mediana y desviación estándar muestral</h3>
+<section id="las-métricas-calculadas-sobre-la-muestra-sirven-como-estimadores-puntuales-de-los-parámetros-de-la-población.-debido-a-la-variabilidad-muestral-los-valores-serán-cercanos-a-μ-170-y-σ-8-pero-no-idénticos." class="level5">
+<h5 class="anchored" data-anchor-id="las-métricas-calculadas-sobre-la-muestra-sirven-como-estimadores-puntuales-de-los-parámetros-de-la-población.-debido-a-la-variabilidad-muestral-los-valores-serán-cercanos-a-μ-170-y-σ-8-pero-no-idénticos.">Las métricas calculadas sobre la muestra sirven como estimadores puntuales de los parámetros de la población. Debido a la variabilidad muestral, los valores serán cercanos a μ = 170 y σ = 8, pero no idénticos.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- RESULTADOS MUESTRALES ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Media muestral: 170.28 cm</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Mediana muestral: 170.17 cm</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Desviación estándar muestral: 7.78 cm</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="porcentaje-de-estudiantes-que-mide-más-de-180-cm" class="level3">
+<h3 class="anchored" data-anchor-id="porcentaje-de-estudiantes-que-mide-más-de-180-cm">3. Porcentaje de estudiantes que mide más de 180 cm</h3>
+<section id="para-saber-qué-proporción-de-la-población-supera-los-180-cm-de-estatura-realizamos-dos-comparaciones" class="level5">
+<h5 class="anchored" data-anchor-id="para-saber-qué-proporción-de-la-población-supera-los-180-cm-de-estatura-realizamos-dos-comparaciones">Para saber qué proporción de la población supera los 180 cm de estatura, realizamos dos comparaciones:</h5>
+</section>
+<section id="valor-muestral-la-proporción-real-de-alumnos-dentro-de-nuestra-simulación-que-mide-más-de-180-cm." class="level5">
+<h5 class="anchored" data-anchor-id="valor-muestral-la-proporción-real-de-alumnos-dentro-de-nuestra-simulación-que-mide-más-de-180-cm.">Valor muestral: La proporción real de alumnos dentro de nuestra simulación que mide más de 180 cm.</h5>
+</section>
+<section id="valor-teórico-la-probabilidad-matemática-exacta-calculada-mediante-la-curva-de-la-distribución-normal." class="level5">
+<h5 class="anchored" data-anchor-id="valor-teórico-la-probabilidad-matemática-exacta-calculada-mediante-la-curva-de-la-distribución-normal.">Valor teórico: La probabilidad matemática exacta calculada mediante la curva de la distribución normal.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- PORCENTAJE DE ESTUDIANTES &gt; 180 CM ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Resultado en la muestra: 11 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Modelo teórico exacto: 10.56 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="altura-del-estudiante-en-el-percentil-25" class="level3">
+<h3 class="anchored" data-anchor-id="altura-del-estudiante-en-el-percentil-25">4. Altura del estudiante en el percentil 25</h3>
+<section id="el-percentil-25-o-primer-cuartil-nos-indica-el-límite-de-estatura-por-debajo-del-cual-se-encuentra-el-25-de-los-estudiantes-más-bajitos-del-grupo.-comparamos-el-valor-que-observamos-en-los-datos-simulados-con-la-referencia-teórica-del-modelo-normal." class="level5">
+<h5 class="anchored" data-anchor-id="el-percentil-25-o-primer-cuartil-nos-indica-el-límite-de-estatura-por-debajo-del-cual-se-encuentra-el-25-de-los-estudiantes-más-bajitos-del-grupo.-comparamos-el-valor-que-observamos-en-los-datos-simulados-con-la-referencia-teórica-del-modelo-normal.">El percentil 25 (o primer cuartil) nos indica el límite de estatura por debajo del cual se encuentra el 25% de los estudiantes más bajitos del grupo. Comparamos el valor que observamos en los datos simulados con la referencia teórica del modelo normal.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Percentil 25 muestral: 165.4 cm</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Percentil 25 teórico: 164.6 cm</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="histograma-de-la-muestra-con-densidad-teórica-superpuesta" class="level3">
+<h3 class="anchored" data-anchor-id="histograma-de-la-muestra-con-densidad-teórica-superpuesta">5. Histograma de la muestra con densidad teórica superpuesta</h3>
+<section id="graficamos-un-histograma-con-la-distribución-de-los-datos-de-la-muestra-y-le-superponemos-la-curva-suave-de-la-distribución-normal-teórica.-esto-nos-permite-comprobar-visualmente-si-los-datos-simulados-siguen-de-cerca-la-clásica-forma-de-campana." class="level5">
+<h5 class="anchored" data-anchor-id="graficamos-un-histograma-con-la-distribución-de-los-datos-de-la-muestra-y-le-superponemos-la-curva-suave-de-la-distribución-normal-teórica.-esto-nos-permite-comprobar-visualmente-si-los-datos-simulados-siguen-de-cerca-la-clásica-forma-de-campana.">Graficamos un histograma con la distribución de los datos de la muestra y le superponemos la curva suave de la distribución normal teórica. Esto nos permite comprobar visualmente si los datos simulados siguen de cerca la clásica forma de campana.</h5>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Tarea_3_Fer_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="ejercicio-2" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-2">Ejercicio 2</h2>
+<section id="simular-un-día-de-producción-1000-mediciones" class="level3">
+<h3 class="anchored" data-anchor-id="simular-un-día-de-producción-1000-mediciones">1. Simular un día de producción (1000 mediciones)</h3>
+<section id="para-analizar-la-estabilidad-del-proceso-industrial-simulamos-1000-mediciones-de-temperatura-correspondiente-a-un-día-de-producción.-el-proceso-está-centrado-en-una-media-de-350circtextc-con-una-desviación-estándar-de-5circtextc-n350-52.-definimos-además-los-límites-de-especificación-que-van-desde-340circtextc-350---10-hasta-360circtextc-350-10" class="level5">
+<h5 class="anchored" data-anchor-id="para-analizar-la-estabilidad-del-proceso-industrial-simulamos-1000-mediciones-de-temperatura-correspondiente-a-un-día-de-producción.-el-proceso-está-centrado-en-una-media-de-350circtextc-con-una-desviación-estándar-de-5circtextc-n350-52.-definimos-además-los-límites-de-especificación-que-van-desde-340circtextc-350---10-hasta-360circtextc-350-10">Para analizar la estabilidad del proceso industrial, simulamos 1000 mediciones de temperatura correspondiente a un día de producción. El proceso está centrado en una media de <span class="math inline">\(350^\circ\text{C}\)</span> con una desviación estándar de <span class="math inline">\(5^\circ\text{C}\)</span> (<span class="math inline">\(N(350, 5^2)\)</span>). Definimos además los límites de especificación, que van desde <span class="math inline">\(340^\circ\text{C}\)</span> (<span class="math inline">\(350 - 10\)</span>) hasta <span class="math inline">\(360^\circ\text{C}\)</span> (<span class="math inline">\(350 + 10\)</span></h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>• Se han simulado exitosamente 1000 mediciones de temperatura.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Temperatura promedio simulada: 350.08 °C</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="qué-porcentaje-del-tiempo-la-temperatura-está-fuera-de-especificación" class="level3">
+<h3 class="anchored" data-anchor-id="qué-porcentaje-del-tiempo-la-temperatura-está-fuera-de-especificación">2. ¿Qué porcentaje del tiempo la temperatura está fuera de especificación?</h3>
+<section id="calculamos-la-proporción-de-productos-o-lecturas-que-caen-fuera-del-rango-permitido-340circtextc-o-360circtextc.-comparamos-el-resultado-obtenido-en-nuestra-simulación-diaria-con-el-porcentaje-teórico-exacto-de-la-distribución-normal." class="level5">
+<h5 class="anchored" data-anchor-id="calculamos-la-proporción-de-productos-o-lecturas-que-caen-fuera-del-rango-permitido-340circtextc-o-360circtextc.-comparamos-el-resultado-obtenido-en-nuestra-simulación-diaria-con-el-porcentaje-teórico-exacto-de-la-distribución-normal.">Calculamos la proporción de productos o lecturas que caen fuera del rango permitido (<span class="math inline">\(&lt; 340^\circ\text{C}\)</span> o <span class="math inline">\(&gt; 360^\circ\text{C}\)</span>). Comparamos el resultado obtenido en nuestra simulación diaria con el porcentaje teórico exacto de la distribución normal.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- TEMPERATURA FUERA DE ESPECIFICACIÓN (μ = 350°C) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje en la muestra simulada: 4.7 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje teórico exacto: 4.55 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="si-el-proceso-se-descentra-a-μ-355c-cómo-cambia-la-calidad" class="level3">
+<h3 class="anchored" data-anchor-id="si-el-proceso-se-descentra-a-μ-355c-cómo-cambia-la-calidad">3. Si el proceso se descentra a μ = 355°C, ¿cómo cambia la calidad?</h3>
+<section id="si-por-un-desajuste-en-el-equipo-la-temperatura-promedio-sube-a-355circtextc-el-proceso-se-desplaza-hacia-la-derecha.-esto-provoca-que-un-mayor-número-de-lecturas-rebasen-el-límite-superior-de-360circtextc-incrementando-considerablemente-el-porcentaje-de-productos-defectuosos-o-fuera-de-especificación." class="level5">
+<h5 class="anchored" data-anchor-id="si-por-un-desajuste-en-el-equipo-la-temperatura-promedio-sube-a-355circtextc-el-proceso-se-desplaza-hacia-la-derecha.-esto-provoca-que-un-mayor-número-de-lecturas-rebasen-el-límite-superior-de-360circtextc-incrementando-considerablemente-el-porcentaje-de-productos-defectuosos-o-fuera-de-especificación.">Si por un desajuste en el equipo la temperatura promedio sube a <span class="math inline">\(355^\circ\text{C}\)</span>, el proceso se desplaza hacia la derecha. Esto provoca que un mayor número de lecturas rebasen el límite superior de <span class="math inline">\(360^\circ\text{C}\)</span>, incrementando considerablemente el porcentaje de productos defectuosos o fuera de especificación.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- EFECTO DEL DESCENTRAMIENTO A μ = 355°C ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Muestra simulada fuera de especificación: 17.7 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje teórico fuera de especificación: 16 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="qué-σ-se-necesita-para-tener-99.9-de-productos-dentro-de-especificación" class="level3">
+<h3 class="anchored" data-anchor-id="qué-σ-se-necesita-para-tener-99.9-de-productos-dentro-de-especificación">4. ¿Qué σ se necesita para tener 99.9% de productos dentro de especificación?</h3>
+<section id="para-que-el-99.9-del-producto-cumpla-con-la-calidad-deseada-el-margen-de-error-fuera-de-especificación-debe-reducirse-a-solo-0.1-0.05-en-cada-cola.-calculamos-el-nuevo-valor-máximo-de-desviación-estándar-sigma-reduciendo-la-variabilidad-del-proceso-para-lograr-este-nivel-de-precisión." class="level5">
+<h5 class="anchored" data-anchor-id="para-que-el-99.9-del-producto-cumpla-con-la-calidad-deseada-el-margen-de-error-fuera-de-especificación-debe-reducirse-a-solo-0.1-0.05-en-cada-cola.-calculamos-el-nuevo-valor-máximo-de-desviación-estándar-sigma-reduciendo-la-variabilidad-del-proceso-para-lograr-este-nivel-de-precisión.">Para que el <span class="math inline">\(99.9\%\)</span> del producto cumpla con la calidad deseada, el margen de error fuera de especificación debe reducirse a solo <span class="math inline">\(0.1\%\)</span> (<span class="math inline">\(0.05\%\)</span> en cada cola). Calculamos el nuevo valor máximo de desviación estándar (<span class="math inline">\(\sigma\)</span>) reduciendo la variabilidad del proceso para lograr este nivel de precisión.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- VARIABILIDAD REQUERIDA (NIVEL DE CALIDAD 99.9%) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Valor Z equivalente: 3.2905 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Desviación estándar requerida (σ): 3.04 °C</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="ejercicio-3" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-3">Ejercicio 3</h2>
+<section id="simula-las-ventas-de-24-meses." class="level3">
+<h3 class="anchored" data-anchor-id="simula-las-ventas-de-24-meses.">1. Simula las ventas de 24 meses.</h3>
+<section id="para-analizar-el-desempeño-financiero-de-la-tienda-a-lo-largo-de-dos-años-simulamos-las-ventas-mensuales-de-24-meses-utilizando-una-distribución-normal-con-media-de-50000-pesos-y-desviación-estándar-de-12000-pesos-n50000-120002." class="level5">
+<h5 class="anchored" data-anchor-id="para-analizar-el-desempeño-financiero-de-la-tienda-a-lo-largo-de-dos-años-simulamos-las-ventas-mensuales-de-24-meses-utilizando-una-distribución-normal-con-media-de-50000-pesos-y-desviación-estándar-de-12000-pesos-n50000-120002.">Para analizar el desempeño financiero de la tienda a lo largo de dos años, simulamos las ventas mensuales de 24 meses utilizando una distribución Normal con media de <span class="math inline">\(50,000\)</span> pesos y desviación estándar de <span class="math inline">\(12,000\)</span> pesos (<span class="math inline">\(N(50000, 12000^2)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- SIMULACIÓN DE VENTAS (24 MESES) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Promedio obtenido en los 24 meses: $ 49895.89 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Venta mínima registrada: $ 26400.59 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Venta máxima registrada: $ 71442.96 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="cuál-es-la-probabilidad-de-tener-ventas-superiores-a-60000-pesos" class="level3">
+<h3 class="anchored" data-anchor-id="cuál-es-la-probabilidad-de-tener-ventas-superiores-a-60000-pesos">2. ¿Cuál es la probabilidad de tener ventas superiores a 60,000 pesos?</h3>
+<section id="calculamos-la-probabilidad-de-que-las-ventas-de-un-mes-rebasen-la-meta-deseada-de-60000-pesos.-comparamos-la-proporción-observada-en-nuestra-simulación-de-24-meses-con-el-valor-teórico-de-la-curva-normal-px-60000." class="level5">
+<h5 class="anchored" data-anchor-id="calculamos-la-probabilidad-de-que-las-ventas-de-un-mes-rebasen-la-meta-deseada-de-60000-pesos.-comparamos-la-proporción-observada-en-nuestra-simulación-de-24-meses-con-el-valor-teórico-de-la-curva-normal-px-60000.">Calculamos la probabilidad de que las ventas de un mes rebasen la meta deseada de <span class="math inline">\(60,000\)</span> pesos. Comparamos la proporción observada en nuestra simulación de 24 meses con el valor teórico de la curva normal (<span class="math inline">\(P(X &gt; 60000)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- PROBABILIDAD DE VENTAS &gt; $60,000 ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Proporción en la muestra (24 meses): 16.67 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Probabilidad teórica exacta: 20.23 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="en-cuántos-meses-se-espera-tener-ventas-por-debajo-de-30000-pesos" class="level3">
+<h3 class="anchored" data-anchor-id="en-cuántos-meses-se-espera-tener-ventas-por-debajo-de-30000-pesos">3. ¿En cuántos meses se espera tener ventas por debajo de 30,000 pesos?</h3>
+<section id="para-identificar-periodos-de-bajas-ventas-evaluamos-en-cuántos-meses-los-ingresos-caen-por-debajo-de-30000-pesos.-obtenemos-el-recuento-real-en-nuestros-24-meses-simulados-y-lo-contrastamos-con-el-valor-esperado-teórico-n-times-px-30000." class="level5">
+<h5 class="anchored" data-anchor-id="para-identificar-periodos-de-bajas-ventas-evaluamos-en-cuántos-meses-los-ingresos-caen-por-debajo-de-30000-pesos.-obtenemos-el-recuento-real-en-nuestros-24-meses-simulados-y-lo-contrastamos-con-el-valor-esperado-teórico-n-times-px-30000.">Para identificar periodos de bajas ventas, evaluamos en cuántos meses los ingresos caen por debajo de <span class="math inline">\(30,000\)</span> pesos. Obtenemos el recuento real en nuestros 24 meses simulados y lo contrastamos con el valor esperado teórico (<span class="math inline">\(n \times P(X &lt; 30000)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- MESES CON VENTAS DEBAJO DE $30,000 ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Meses observados en la muestra: 1 de 24 meses</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Valor teórico esperado: 1.15 meses</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="calcula-el-rango-intercuartílico-de-las-ventas" class="level3">
+<h3 class="anchored" data-anchor-id="calcula-el-rango-intercuartílico-de-las-ventas">4. Calcula el rango intercuartílico de las ventas</h3>
+<section id="el-rango-intercuartílico-iqr-q_3---q_1-representa-la-dispersión-o-rango-en-el-que-se-ubica-el-50-central-de-las-ventas-mensuales-de-la-tienda.-lo-calculamos-tanto-empíricamente-con-los-datos-simulados-como-de-forma-teórica-mediante-los-cuantiles-de-la-distribución-normal." class="level5">
+<h5 class="anchored" data-anchor-id="el-rango-intercuartílico-iqr-q_3---q_1-representa-la-dispersión-o-rango-en-el-que-se-ubica-el-50-central-de-las-ventas-mensuales-de-la-tienda.-lo-calculamos-tanto-empíricamente-con-los-datos-simulados-como-de-forma-teórica-mediante-los-cuantiles-de-la-distribución-normal.">El Rango Intercuartílico (<span class="math inline">\(IQR = Q_3 - Q_1\)</span>) representa la dispersión o rango en el que se ubica el <span class="math inline">\(50\%\)</span> central de las ventas mensuales de la tienda. Lo calculamos tanto empíricamente con los datos simulados como de forma teórica mediante los cuantiles de la distribución normal.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- RANGO INTERCUARTÍLICO (IQR) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• IQR en la muestra simulada: $ 12746.64 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• IQR teórico exacto: $ 16187.75 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="si-la-meta-es-superar-45000-pesos-qué-porcentaje-de-meses-se-cumple" class="level3">
+<h3 class="anchored" data-anchor-id="si-la-meta-es-superar-45000-pesos-qué-porcentaje-de-meses-se-cumple">5. Si la meta es superar 45,000 pesos, ¿qué porcentaje de meses se cumple?</h3>
+<section id="evaluamos-el-nivel-de-cumplimiento-del-objetivo-de-ventas-de-45000-pesos-mensuales.-calculamos-el-porcentaje-de-meses-que-lograron-superar-este-umbral-dentro-de-la-simulación-y-la-probabilidad-teórica-de-cumplir-la-meta-px-45000." class="level5">
+<h5 class="anchored" data-anchor-id="evaluamos-el-nivel-de-cumplimiento-del-objetivo-de-ventas-de-45000-pesos-mensuales.-calculamos-el-porcentaje-de-meses-que-lograron-superar-este-umbral-dentro-de-la-simulación-y-la-probabilidad-teórica-de-cumplir-la-meta-px-45000.">Evaluamos el nivel de cumplimiento del objetivo de ventas de <span class="math inline">\(45,000\)</span> pesos mensuales. Calculamos el porcentaje de meses que lograron superar este umbral dentro de la simulación y la probabilidad teórica de cumplir la meta (<span class="math inline">\(P(X &gt; 45000)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- CUMPLIMIENTO DE META (&gt; $45,000) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje de meses en la muestra: 58.33 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje teórico de cumplimiento: 66.15 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="ejercicio-4" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-4">Ejercicio 4</h2>
+<section id="simula-la-vida-útil-de-800-baterías" class="level3">
+<h3 class="anchored" data-anchor-id="simula-la-vida-útil-de-800-baterías">1. Simula la vida útil de 800 baterías</h3>
+<section id="para-estudiar-la-durabilidad-de-las-baterías-simulamos-una-muestra-de-800-unidades-cuya-vida-útil-sigue-una-distribución-normal-con-media-de-1200-horas-y-una-desviación-estándar-de-150-horas-n1200-1502." class="level5">
+<h5 class="anchored" data-anchor-id="para-estudiar-la-durabilidad-de-las-baterías-simulamos-una-muestra-de-800-unidades-cuya-vida-útil-sigue-una-distribución-normal-con-media-de-1200-horas-y-una-desviación-estándar-de-150-horas-n1200-1502.">Para estudiar la durabilidad de las baterías, simulamos una muestra de 800 unidades cuya vida útil sigue una distribución Normal con media de 1200 horas y una desviación estándar de 150 horas (<span class="math inline">\(N(1200, 150^2)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- SIMULACIÓN DE 800 BATERÍAS ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Baterías simuladas: 800 unidades</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Duración promedio obtenida: 1201.63 horas</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Duración mínima observada: 778.53 horas</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Duración máxima observada: 1686.16 horas</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="qué-garantía-en-horas-cubre-al-95-de-las-baterías" class="level3">
+<h3 class="anchored" data-anchor-id="qué-garantía-en-horas-cubre-al-95-de-las-baterías">2. ¿Qué garantía (en horas) cubre al 95% de las baterías?</h3>
+<section id="para-ofrecer-una-garantía-que-beneficie-al-95-de-las-baterías-producidas-es-decir-que-solo-el-5-de-las-baterías-duren-menos-que-el-tiempo-de-garantía-y-requieran-reemplazo-calculamos-el-percentil-5-de-la-distribución." class="level5">
+<h5 class="anchored" data-anchor-id="para-ofrecer-una-garantía-que-beneficie-al-95-de-las-baterías-producidas-es-decir-que-solo-el-5-de-las-baterías-duren-menos-que-el-tiempo-de-garantía-y-requieran-reemplazo-calculamos-el-percentil-5-de-la-distribución.">Para ofrecer una garantía que beneficie al 95% de las baterías producidas (es decir, que solo el 5% de las baterías duren menos que el tiempo de garantía y requieran reemplazo), calculamos el percentil 5 de la distribución.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- TIEMPO DE GARANTÍA PARA EL 95% CUMPLIMIENTO ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Garantía según la muestra: 957.18 horas</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Garantía teórica exacta: 953.27 horas</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="si-se-venden-10000-baterías-con-garantía-de-900-horas-cuántas-se-espera-que-fallen" class="level3">
+<h3 class="anchored" data-anchor-id="si-se-venden-10000-baterías-con-garantía-de-900-horas-cuántas-se-espera-que-fallen">3. Si se venden 10,000 baterías con garantía de 900 horas, ¿cuántas se espera que fallen?</h3>
+<section id="calculamos-la-probabilidad-de-que-una-batería-dure-menos-de-900-horas-px-900-y-la-multiplicamos-por-el-lote-total-de-10000-ventas-para-estimar-el-número-esperado-de-reclamos-de-garantía-por-falla-prematura." class="level5">
+<h5 class="anchored" data-anchor-id="calculamos-la-probabilidad-de-que-una-batería-dure-menos-de-900-horas-px-900-y-la-multiplicamos-por-el-lote-total-de-10000-ventas-para-estimar-el-número-esperado-de-reclamos-de-garantía-por-falla-prematura.">Calculamos la probabilidad de que una batería dure menos de 900 horas (<span class="math inline">\(P(X &lt; 900)\)</span>) y la multiplicamos por el lote total de 10,000 ventas para estimar el número esperado de reclamos de garantía por falla prematura.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- ESTIMACIÓN DE FALLAS EN 10,000 BATERÍAS (GARANTÍA DE 900 HRS) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Baterías con falla estimadas (según muestra): 213 unidades</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Baterías con falla esperadas (modelo teórico): 228 unidades</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="compara-la-media-y-mediana-de-tu-simulación-con-los-valores-teóricos" class="level3">
+<h3 class="anchored" data-anchor-id="compara-la-media-y-mediana-de-tu-simulación-con-los-valores-teóricos">4. Compara la media y mediana de tu simulación con los valores teóricos</h3>
+<section id="dado-que-la-distribución-normal-es-perfectamente-simétrica-por-definición-la-media-y-la-mediana-teóricas-son-exactamente-iguales-mu-tildex-1200text-horas.-evaluamos-qué-tan-cerca-se-mantienen-estos-indicadores-dentro-de-nuestra-muestra-de-800-datos-simulados." class="level5">
+<h5 class="anchored" data-anchor-id="dado-que-la-distribución-normal-es-perfectamente-simétrica-por-definición-la-media-y-la-mediana-teóricas-son-exactamente-iguales-mu-tildex-1200text-horas.-evaluamos-qué-tan-cerca-se-mantienen-estos-indicadores-dentro-de-nuestra-muestra-de-800-datos-simulados.">Dado que la distribución Normal es perfectamente simétrica por definición, la media y la mediana teóricas son exactamente iguales (<span class="math inline">\(\mu = \tilde{x} = 1200\text{ horas}\)</span>). Evaluamos qué tan cerca se mantienen estos indicadores dentro de nuestra muestra de 800 datos simulados.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- COMPARACIÓN DE TENDENCIA CENTRAL ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Media Muestral: 1201.63 hrs | Media Teórica: 1200 hrs</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Mediana Muestral: 1201.38 hrs | Mediana Teórica: 1200 hrs</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="cuál-es-el-percentil-10-de-la-distribución" class="level3">
+<h3 class="anchored" data-anchor-id="cuál-es-el-percentil-10-de-la-distribución">5. ¿Cuál es el percentil 10 de la distribución?</h3>
+<section id="el-percentil-10-representa-la-duración-límite-por-debajo-de-la-cual-se-ubica-el-10-de-las-baterías-con-menor-rendimiento-de-vida-útil.-lo-calculamos-tanto-de-forma-empírica-en-nuestra-muestra-simulada-como-mediante-la-función-cuantil-de-la-curva-normal." class="level6">
+<h6 class="anchored" data-anchor-id="el-percentil-10-representa-la-duración-límite-por-debajo-de-la-cual-se-ubica-el-10-de-las-baterías-con-menor-rendimiento-de-vida-útil.-lo-calculamos-tanto-de-forma-empírica-en-nuestra-muestra-simulada-como-mediante-la-función-cuantil-de-la-curva-normal.">El percentil 10 representa la duración límite por debajo de la cual se ubica el 10% de las baterías con menor rendimiento de vida útil. Lo calculamos tanto de forma empírica en nuestra muestra simulada como mediante la función cuantil de la curva Normal.</h6>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- PERCENTIL 10 DE LA DISTRIBUCIÓN ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Percentil 10 en la muestra: 1007.26 horas</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Percentil 10 teórico exacto: 1007.77 horas</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="ejercicio-5" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-5">Ejercicio 5</h2>
+<section id="simula-1000-mediciones" class="level3">
+<h3 class="anchored" data-anchor-id="simula-1000-mediciones">1. Simula 1000 mediciones</h3>
+<section id="para-analizar-el-comportamiento-y-la-precisión-de-un-instrumento-de-medición-simulamos-un-total-de-1000-errores-de-medición-siguiendo-una-distribución-normal-centrada-en-cero-y-con-una-desviación-estándar-de-2.5-unidades-n0-2.52." class="level5">
+<h5 class="anchored" data-anchor-id="para-analizar-el-comportamiento-y-la-precisión-de-un-instrumento-de-medición-simulamos-un-total-de-1000-errores-de-medición-siguiendo-una-distribución-normal-centrada-en-cero-y-con-una-desviación-estándar-de-2.5-unidades-n0-2.52.">Para analizar el comportamiento y la precisión de un instrumento de medición, simulamos un total de 1,000 errores de medición siguiendo una distribución Normal centrada en cero y con una desviación estándar de <span class="math inline">\(2.5\)</span> unidades (<span class="math inline">\(N(0, 2.5^2)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- SIMULACIÓN DE 1,000 ERRORES DE MEDICIÓN ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Mediciones simuladas: 1000 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Error promedio observado: 0.04 unidades</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Error mínimo observado: -7.024 unidades</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Error máximo observado: 8.103 unidades</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="qué-porcentaje-de-errores-está-entre--5-y-5-unidades" class="level3">
+<h3 class="anchored" data-anchor-id="qué-porcentaje-de-errores-está-entre--5-y-5-unidades">2. ¿Qué porcentaje de errores está entre -5 y +5 unidades?</h3>
+<section id="evaluamos-la-proporción-de-lecturas-cuyo-error-de-medición-se-mantiene-dentro-de-un-rango-tolerable-de-pm-5-unidades-que-corresponde-a-un-intervalo-de-mu-pm-2sigma.-comparamos-el-resultado-obtenido-de-la-muestra-simulada-con-la-probabilidad-teórica-calculada-con-la-curva-normal." class="level5">
+<h5 class="anchored" data-anchor-id="evaluamos-la-proporción-de-lecturas-cuyo-error-de-medición-se-mantiene-dentro-de-un-rango-tolerable-de-pm-5-unidades-que-corresponde-a-un-intervalo-de-mu-pm-2sigma.-comparamos-el-resultado-obtenido-de-la-muestra-simulada-con-la-probabilidad-teórica-calculada-con-la-curva-normal.">Evaluamos la proporción de lecturas cuyo error de medición se mantiene dentro de un rango tolerable de <span class="math inline">\(\pm 5\)</span> unidades (que corresponde a un intervalo de <span class="math inline">\(\mu \pm 2\sigma\)</span>). Comparamos el resultado obtenido de la muestra simulada con la probabilidad teórica calculada con la curva Normal.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- ERRORES EN EL RANGO [-5, +5] UNIDADES ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje observado en la muestra: 95.3 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje teórico exacto: 95.45 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="calcula-la-probabilidad-de-que-un-error-sea-mayor-a-6-unidades-en-valor-absoluto" class="level3">
+<h3 class="anchored" data-anchor-id="calcula-la-probabilidad-de-que-un-error-sea-mayor-a-6-unidades-en-valor-absoluto">3. Calcula la probabilidad de que un error sea mayor a 6 unidades en valor absoluto</h3>
+<section id="calculamos-la-probabilidad-de-cometer-un-error-extremo-es-decir-un-error-que-supere-las-6-unidades-hacia-arriba-o-hacia-abajo-verterrorvert-6-equivalente-a-error--6-o-error-6." class="level5">
+<h5 class="anchored" data-anchor-id="calculamos-la-probabilidad-de-cometer-un-error-extremo-es-decir-un-error-que-supere-las-6-unidades-hacia-arriba-o-hacia-abajo-verterrorvert-6-equivalente-a-error--6-o-error-6.">Calculamos la probabilidad de cometer un error extremo, es decir, un error que supere las <span class="math inline">\(6\)</span> unidades hacia arriba o hacia abajo (<span class="math inline">\(\vert{}Error\vert{} &gt; 6\)</span>, equivalente a <span class="math inline">\(Error &lt; -6\)</span> o <span class="math inline">\(Error &gt; 6\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- PROBABILIDAD DE ERRORES EXTREMOS (|ERROR| &gt; 6) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Proporción en la muestra simulada: 1.6 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Probabilidad teórica exacta: 1.64 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="si-se-considera-preciso-un-error-le-3-unidades-qué-porcentaje-de-mediciones-son-precisas" class="level3">
+<h3 class="anchored" data-anchor-id="si-se-considera-preciso-un-error-le-3-unidades-qué-porcentaje-de-mediciones-son-precisas">4. Si se considera “preciso” un error <span class="math inline">\(\le 3\)</span> unidades, ¿qué porcentaje de mediciones son precisas?</h3>
+<section id="definimos-una-medición-como-precisa-si-la-magnitud-absoluta-de-su-error-no-excede-las-3-unidades-verterrorvert-le-3.-determinamos-la-proporción-de-mediciones-que-cumplen-con-este-estándar-de-calidad-tanto-en-la-muestra-como-teóricamente." class="level5">
+<h5 class="anchored" data-anchor-id="definimos-una-medición-como-precisa-si-la-magnitud-absoluta-de-su-error-no-excede-las-3-unidades-verterrorvert-le-3.-determinamos-la-proporción-de-mediciones-que-cumplen-con-este-estándar-de-calidad-tanto-en-la-muestra-como-teóricamente.">Definimos una medición como “precisa” si la magnitud absoluta de su error no excede las <span class="math inline">\(3\)</span> unidades (<span class="math inline">\(\vert{}Error\vert{} \le 3\)</span>). Determinamos la proporción de mediciones que cumplen con este estándar de calidad tanto en la muestra como teóricamente.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- PORCENTAJE DE MEDICIONES PRECISAS (|ERROR| &lt;= 3) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje de precisión en la muestra: 77.3 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje teórico de precisión: 76.99 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="verifica-que-la-distribución-es-simétrica-alrededor-de-0" class="level3">
+<h3 class="anchored" data-anchor-id="verifica-que-la-distribución-es-simétrica-alrededor-de-0">5. Verifica que la distribución es simétrica alrededor de 0</h3>
+<section id="para-comprobar-numéricamente-la-simetría-de-la-distribución-alrededor-de-cero-verificamos-que-la-media-y-la-mediana-sean-prácticamente-iguales-a-0-que-el-coeficiente-de-asimetría-sea-cercano-a-0-y-que-la-proporción-de-errores-positivos-y-negativos-sea-equitativa-approx-50-cada-uno." class="level5">
+<h5 class="anchored" data-anchor-id="para-comprobar-numéricamente-la-simetría-de-la-distribución-alrededor-de-cero-verificamos-que-la-media-y-la-mediana-sean-prácticamente-iguales-a-0-que-el-coeficiente-de-asimetría-sea-cercano-a-0-y-que-la-proporción-de-errores-positivos-y-negativos-sea-equitativa-approx-50-cada-uno.">Para comprobar numéricamente la simetría de la distribución alrededor de cero, verificamos que la media y la mediana sean prácticamente iguales a 0, que el coeficiente de asimetría sea cercano a 0, y que la proporción de errores positivos y negativos sea equitativa (<span class="math inline">\(\approx 50\%\)</span> cada uno).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- VERIFICACIÓN DE SIMETRÍA ALREDEDOR DE 0 ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Media de los errores: 0.0403  (Teórica: 0)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Mediana de los errores: 0.023  (Teórica: 0)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje de errores negativos (&lt; 0): 49.5 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje de errores positivos (&gt; 0): 50.5 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="ejercicio-6" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-6">Ejercicio 6</h2>
+<section id="simula-200-estudiantes-de-cada-grupo" class="level3">
+<h3 class="anchored" data-anchor-id="simula-200-estudiantes-de-cada-grupo">1. Simula 200 estudiantes de cada grupo</h3>
+<section id="para-realizar-el-análisis-comparativo-del-rendimiento-académico-simulamos-las-calificaciones-de-200-estudiantes-del-grupo-a-n75-102-y-200-estudiantes-del-grupo-b-n82-82." class="level5">
+<h5 class="anchored" data-anchor-id="para-realizar-el-análisis-comparativo-del-rendimiento-académico-simulamos-las-calificaciones-de-200-estudiantes-del-grupo-a-n75-102-y-200-estudiantes-del-grupo-b-n82-82.">Para realizar el análisis comparativo del rendimiento académico, simulamos las calificaciones de 200 estudiantes del Grupo A (<span class="math inline">\(N(75, 10^2)\)</span>) y 200 estudiantes del Grupo B (<span class="math inline">\(N(82, 8^2)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- SIMULACIÓN DE EXÁMENES (200 ESTUDIANTES POR GRUPO) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Grupo A - Calificación promedio observada: 74.91 puntos</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Grupo B - Calificación promedio observada: 82.34 puntos</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="qué-porcentaje-de-estudiantes-del-grupo-a-supera-la-media-del-grupo-b" class="level3">
+<h3 class="anchored" data-anchor-id="qué-porcentaje-de-estudiantes-del-grupo-a-supera-la-media-del-grupo-b">2. ¿Qué porcentaje de estudiantes del Grupo A supera la media del Grupo B?</h3>
+<section id="evaluamos-qué-proporción-de-alumnos-del-grupo-a-lograron-obtener-una-calificación-mayor-a-la-media-teórica-del-grupo-b-mu_b-82.-comparamos-el-porcentaje-observado-en-la-muestra-simulada-con-la-probabilidad-teórica-exacta-px_a-82." class="level5">
+<h5 class="anchored" data-anchor-id="evaluamos-qué-proporción-de-alumnos-del-grupo-a-lograron-obtener-una-calificación-mayor-a-la-media-teórica-del-grupo-b-mu_b-82.-comparamos-el-porcentaje-observado-en-la-muestra-simulada-con-la-probabilidad-teórica-exacta-px_a-82.">Evaluamos qué proporción de alumnos del Grupo A lograron obtener una calificación mayor a la media teórica del Grupo B (<span class="math inline">\(\mu_B = 82\)</span>). Comparamos el porcentaje observado en la muestra simulada con la probabilidad teórica exacta (<span class="math inline">\(P(X_A &gt; 82)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- ESTUDIANTES DEL GRUPO A QUE SUPERAN LA MEDIA DEL GRUPO B (82 PUNTOS) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje observado en la muestra: 21.5 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Porcentaje teórico exacto: 24.2 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="cuál-es-la-probabilidad-de-que-un-estudiante-del-grupo-b-tenga-puntuación-menor-a-70" class="level3">
+<h3 class="anchored" data-anchor-id="cuál-es-la-probabilidad-de-que-un-estudiante-del-grupo-b-tenga-puntuación-menor-a-70">3. ¿Cuál es la probabilidad de que un estudiante del Grupo B tenga puntuación menor a 70?</h3>
+<section id="calculamos-la-probabilidad-de-que-un-estudiante-perteneciente-al-grupo-b-obtenga-un-desempeño-bajo-considerado-como-una-calificación-menor-a-70-puntos-px_b-70." class="level5">
+<h5 class="anchored" data-anchor-id="calculamos-la-probabilidad-de-que-un-estudiante-perteneciente-al-grupo-b-obtenga-un-desempeño-bajo-considerado-como-una-calificación-menor-a-70-puntos-px_b-70.">Calculamos la probabilidad de que un estudiante perteneciente al Grupo B obtenga un desempeño bajo, considerado como una calificación menor a 70 puntos (<span class="math inline">\(P(X_B &lt; 70)\)</span>).</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- PROBABILIDAD EN GRUPO B DE PUNTUACIÓN MENOR A 70 ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Proporción en la muestra simulada: 6 %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Probabilidad teórica exacta: 6.68 %</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="compara-las-distribuciones-visualmente" class="level3">
+<h3 class="anchored" data-anchor-id="compara-las-distribuciones-visualmente">4. Compara las distribuciones visualmente</h3>
+<section id="generamos-un-gráfico-comparativo-de-densidad-para-observar-las-diferencias-en-el-rendimiento-de-ambos-grupos.-se-aprecia-que-el-grupo-b-tiene-un-promedio-más-elevado-y-menor-dispersión-mayor-concentración-de-notas-altas-mientras-que-el-grupo-a-presenta-mayor-variabilidad." class="level5">
+<h5 class="anchored" data-anchor-id="generamos-un-gráfico-comparativo-de-densidad-para-observar-las-diferencias-en-el-rendimiento-de-ambos-grupos.-se-aprecia-que-el-grupo-b-tiene-un-promedio-más-elevado-y-menor-dispersión-mayor-concentración-de-notas-altas-mientras-que-el-grupo-a-presenta-mayor-variabilidad.">Generamos un gráfico comparativo de densidad para observar las diferencias en el rendimiento de ambos grupos. Se aprecia que el Grupo B tiene un promedio más elevado y menor dispersión (mayor concentración de notas altas), mientras que el Grupo A presenta mayor variabilidad.</h5>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Tarea_3_Fer_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="a-partir-de-qué-puntuación-está-el-10-superior-de-cada-grupo" class="level3">
+<h3 class="anchored" data-anchor-id="a-partir-de-qué-puntuación-está-el-10-superior-de-cada-grupo">5. ¿A partir de qué puntuación está el 10% superior de cada grupo?</h3>
+<section id="para-identificar-el-umbral-de-excelencia-académica-el-percentil-90-determinamos-la-calificación-mínima-requerida-para-formar-parte-del-10-de-los-estudiantes-con-mejores-puntuaciones-en-cada-grupo." class="level5">
+<h5 class="anchored" data-anchor-id="para-identificar-el-umbral-de-excelencia-académica-el-percentil-90-determinamos-la-calificación-mínima-requerida-para-formar-parte-del-10-de-los-estudiantes-con-mejores-puntuaciones-en-cada-grupo.">Para identificar el umbral de excelencia académica (el percentil 90), determinamos la calificación mínima requerida para formar parte del 10% de los estudiantes con mejores puntuaciones en cada grupo.</h5>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>--- UMBRAL PARA EL 10% SUPERIOR (PERCENTIL 90) ---</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Grupo A -&gt; Muestra: 87.1 pts | Teórico: 87.82 pts</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Grupo B -&gt; Muestra: 92.72 pts | Teórico: 92.25 pts</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="conclusión-general" class="level2">
+<h2 class="anchored" data-anchor-id="conclusión-general">Conclusión General</h2>
+<p>A través del desarrollo de esta práctica, se demostró el valor fundamental de la <strong>Distribución Normal</strong> como una herramienta analítica clave para la toma de decisiones y el modelado de fenómenos reales en diversos ámbitos cotidianos e industriales. Mediante el uso de <strong>simulaciones estocásticas en R</strong>, fue posible contrastar el comportamiento teóricamente esperado de la curva normal con muestras de datos simulados en distintos escenarios:</p>
+<ol type="1">
+<li><strong>Control de Procesos Industriales:</strong> Se evaluó la importancia de mantener la estabilidad en variables críticas (como la temperatura) dentro de especificaciones estrictas, observando cómo un ligero desplazamiento en la media o en la variabilidad del proceso impacta directamente en la proporción de productos defectuosos.</li>
+<li><strong>Análisis Financiero y de Ventas:</strong> El modelo normal permitió establecer expectativas realistas para los ingresos mensuales de una empresa, facilitando el cálculo de riesgos, márgenes de ganancia y el grado de cumplimiento de metas comerciales.</li>
+<li><strong>Control de Calidad y Garantías:</strong> Se determinó la durabilidad óptima de un producto para definir políticas de garantía sostenibles, equilibrando la satisfacción del cliente con la minimización de costos por reemplazos prematuros.</li>
+<li><strong>Análisis de Errores de Medición:</strong> Se comprobó la simetría inherente de las desviaciones aleatorias alrededor de un punto central, permitiendo categorizar el nivel de precisión técnica de instrumentos e indicadores.</li>
+<li><strong>Evaluación Comparativa:</strong> La superposición de distribuciones normales facilitó la comparación objetiva entre diferentes poblaciones, identificando patrones de rendimiento, niveles de variabilidad y umbrales de excelencia académica.</li>
+</ol>
+<p>En conclusión, la combinación de la teoría probabilística con la simulación computacional no solo valida la solidez de los modelos matemáticos, sino que también aporta una perspectiva práctica para anticipar problemas, optimizar recursos y respaldar decisiones estratégicas basadas en datos.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
