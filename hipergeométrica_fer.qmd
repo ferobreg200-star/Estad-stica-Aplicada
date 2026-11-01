@@ -1,0 +1,140 @@
+---
+title: "Distribución Hipergeométrica"
+author: "Maria Fernanda Yañez Obregón"
+format: html
+editor: visual
+---
+
+# Ejercicios Propuestos
+
+## Introducción
+
+En esta sección se estudia la distribución hipergeométrica, la cual modela el número de éxitos en una muestra de tamaño $n$ extraída sin reemplazo de una población finita de tamaño $N$ que contiene $K$ elementos con la característica de interés. Siguiendo los fundamentos teóricos de Luis Rincón (*Introducción a la Probabilidad*), se analiza su función de probabilidad, el impacto visual de la variación de sus parámetros, sus medidas de tendencia central y dispersión, y la verificación empírica del Teorema Central del Límite mediante simulación computacional.
+
+## Ejercicio 1: Función de probabilidad y gráficas por cambio de parámetros
+
+```{r}
+#| label: exr-hyper-graficas
+#| echo: false
+# Basado en la teoría de Luis Rincón (págs. 243-247)
+# Función de probabilidad de la hipergeométrica: P(X = x) = [C(K, x) * C(N - K, n - x)] / C(N, n)
+
+# Definimos una función para graficar la distribución cambiando parámetros
+plot_hyper_params <- function(N, K, n) {
+  x <- max(0, n - (N - K)):min(n, K)
+  px <- dhyper(x, m = K, n = N - K, k = n)
+  
+  plot(x, px, type = "h", lwd = 3, col = "forestgreen",
+       main = paste0("Hipergeométrica(N=", N, ", K=", K, ", n=", n, ")"),
+       xlab = "Número de éxitos en la muestra (x)",
+       ylab = "P(X = x)")
+  points(x, px, pch = 16, col = "forestgreen", cex = 1.2)
+}
+
+# Configuramos la ventana para comparar diferentes escenarios de parámetros
+par(mfrow = c(1, 3))
+
+# Escenario 1: Población estándar
+plot_hyper_params(N = 50, K = 20, n = 10)
+
+# Escenario 2: Mayor proporción de éxitos en la población (K)
+plot_hyper_params(N = 50, K = 35, n = 10)
+
+# Escenario 3: Mayor tamaño de muestra (n)
+plot_hyper_params(N = 50, K = 20, n = 25)
+
+par(mfrow = c(1, 1)) # Restaurar ventana gráfica
+```
+
+## Ejercicio 2: Características teóricas (Media y Varianza)
+
+```{r}
+#| label: exr-hyper-caracteristicas
+#| echo: false
+# Parámetros de ejemplo basados en Luis Rincón
+N <- 100  # Población total
+K <- 30   # Éxitos en la población
+n <- 20   # Tamaño de la muestra
+
+# Características teóricas según fórmulas formales:
+# Media: E[X] = n * (K / N)
+# Varianza: Var(X) = n * (K / N) * (1 - K / N) * ((N - n) / (N - 1)) [Factor de corrección por población finita]
+
+media_teorica <- n * (K / N)
+varianza_teorica <- n * (K / N) * (1 - (K / N)) * ((N - n) / (N - 1))
+sd_teorica <- sqrt(varianza_teorica)
+
+cat("--- CARACTERÍSTICAS TEÓRICAS (Hipergeométrica) --- \n")
+cat("Población (N):", N, "| Éxitos en población (K):", K, "| Muestra (n):", n, "\n")
+cat("Esperanza E[X]:", media_teorica, "\n")
+cat("Varianza Var(X):", varianza_teorica, "\n")
+cat("Desviación Estándar SD(X):", sd_teorica, "\n")
+```
+
+## Ejercicio 3: Ejemplo con valores simulados
+
+```{r}
+#| label: exr-hyper-simulacion
+#| echo: false
+set.seed(123)
+N <- 100
+K <- 30
+n <- 20
+N_sim <- 10000
+
+# Simulación de rhyper() para número de éxitos en 10,000 experimentos
+simulacion_hyper <- rhyper(nn = N_sim, m = K, n = N - K, k = n)
+
+media_sim <- mean(simulacion_hyper)
+varianza_sim <- var(simulacion_hyper)
+sd_sim <- sd(simulacion_hyper)
+
+cat("--- VALORES SIMULADOS (10,000 experimentos) --- \n")
+cat("Media simulada:", media_sim, "| Teórica:", media_teorica, "\n")
+cat("Varianza simulada:", varianza_sim, "| Teórica:", varianza_teorica, "\n")
+cat("Desv. Est. simulada:", sd_sim, "| Teórica:", sd_teorica, "\n")
+```
+
+## Ejercicio 4: Verificación del Teorema Central del Límite
+
+```{r}
+#| label: exr-hyper-tcl
+#| echo: false
+set.seed(123)
+
+# Parámetros para el TCL
+k_muestras <- 1000
+n_tamano <- 30
+N_pob <- 200
+K_pob <- 80
+
+# Generación de k muestras de tamaño 30 de una distribución hipergeométrica
+matriz_hyper <- matrix(rhyper(nn = k_muestras * n_tamano, m = K_pob, n = N_pob - K_pob, k = n_tamano),
+                       nrow = k_muestras, ncol = n_tamano)
+
+# Cálculo de las medias muestrales
+medias_muestrales <- rowMeans(matriz_hyper)
+
+# Parámetros teóricos de la media muestral para la hipergeométrica
+p_exito <- K_pob / N_pob
+mu_xbar <- n_tamano * p_exito
+# Varianza de la media muestral considerando el factor de corrección de población finita
+var_xbar <- (n_tamano * p_exito * (1 - p_exito) * ((N_pob - n_tamano) / (N_pob - 1))) / n_tamano
+sd_xbar <- sqrt(var_xbar)
+
+# Visualización y verificación gráfica del TCL
+hist(medias_muestrales, probability = TRUE, col = "darkseagreen1",
+     main = "Verificación del TCL para Medias Muestrales (Hipergeométrica)",
+     xlab = "Medias Muestrales", ylab = "Densidad", breaks = 25)
+curve(dnorm(x, mean = mu_xbar, sd = sd_xbar), add = TRUE, col = "darkgreen", lwd = 2)
+legend("topright", legend = c("Medias Muestrales", "Normal Teórica (TCL)"),
+       fill = c("darkseagreen1", NA), col = c(NA, "darkgreen"), lty = c(0, 1), lwd = c(0, 2))
+
+cat("--- VERIFICACIÓN TCL (Hipergeométrica) --- \n")
+cat("Media teórica de X_bar:", mu_xbar, "| Media de medias simuladas:", mean(medias_muestrales), "\n")
+cat("Desv. Est. teórica de X_bar:", sd_xbar, "| Desv. Est. de medias simuladas:", sd(medias_muestrales), "\n")
+```
+
+## Conclusión
+
+A partir del desarrollo teórico basado en los principios de muestreo sin reemplazo y la experimentación computacional, se comprobó el comportamiento de la distribución hipergeométrica. Las gráficas demostraron cómo la variación en los parámetros de población y tamaño de muestra altera la distribución de probabilidad. Asimismo, la simulación validó la precisión de las fórmulas de esperanza y varianza con factor de corrección por población finita, mientras que la verificación del Teorema Central del Límite confirmó que las medias muestrales convergen adecuadamente hacia una distribución normal, cerrando con éxito el análisis de las variables discretas principales.
